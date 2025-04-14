@@ -13,8 +13,8 @@ const listingSchema = new Schema({
   },
   image: {
     type: String,
-    default : "https://cdn.pixabay.com/photo/2024/12/28/05/28/sydney-9295243_1280.jpg",
-    set: (v) => (v === "https://cdn.pixabay.com/photo/2024/12/28/05/28/sydney-9295243_1280.jpg" ? "deafault" : v),
+    default: "https://cdn.pixabay.com/photo/2024/12/28/05/28/sydney-9295243_1280.jpg",
+    set: (v) => (v.trim() === "" ? undefined : v)
   },
   price: {
     type: Number,
