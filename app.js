@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
   res.send("app is working");
 });
 
-app.use((req, res, next) => {
+app.use((req, res, next) => {                     //local variables
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
@@ -84,7 +84,7 @@ app.use((req, res, next) => {
 
 //Routes App.js
 app.use("/listings", listingsRouter);
-app.use("/listings/:id/review", reviewsRouter);
+app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 
 //Error Handling
