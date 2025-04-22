@@ -1,0 +1,98 @@
+.review-list {
+    margin-top: 2rem;
+}
+
+.review-item {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.review-author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.review-author-info {
+    flex-grow: 1;
+}
+
+.review-author-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #2d3436;
+}
+
+.review-date {
+    font-size: 0.875rem;
+    color: #636e72;
+}
+
+.review-rating {
+    margin-bottom: 0.75rem;
+}
+
+.review-comment {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #2d3436;
+    margin-bottom: 0;
+}
+
+/* Review Form Styling */
+.review-form-container {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.review-form-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2d3436;
+}
+
+.review-form textarea {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.review-form textarea:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+.review-form .btn-submit {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.review-form .btn-submit:hover {
+    background-color: #357abd;
+}

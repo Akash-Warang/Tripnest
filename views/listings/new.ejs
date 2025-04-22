@@ -1,87 +1,178 @@
 <% layout('/layouts/boilerplate') -%>
 <body>
-  <div class="row mt-3">
+  <div class="row mt-3 mb-4">
     <div class="col-8 offset-2">
-        <br>
+      <br>
       <h3>Create new listing</h3>
       <form action="/listings" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
         <div class="mb-3">
           <label for="title" class="form-label">Title</label>
-          <input
-            type="text"
-            name="listing[title]"
-            id="title"
-            placeholder="Enter property name"
-            class="form-control"
-            required
-          />
+          <input type="text" name="listing[title]" id="title" placeholder="Enter property name" class="form-control" required />
           <div class="valid-feedback">Title Looks good..!</div>
           <div class="invalid-feedback">Please give title</div>
         </div>
+
         <div class="mb-3">
           <label for="description" class="form-label">Description</label>
-          <textarea
-            name="listing[description]"
-            id="description"
-            placeholder="Description"
-            class="form-control"
-            required
-          ></textarea>
+          <textarea name="listing[description]" id="description" placeholder="Write Short Description" class="form-control" required></textarea>
           <div class="invalid-feedback">Write short description</div>
         </div>
 
         <div class="mb-3">
           <label for="image" class="form-label">Upload Image</label>
-          <input
-            type="file"
-            name="listing[image]"
-            id="image" 
-            class="form-control"
-          />
+          <input type="file" name="listing[image]" id="image" class="form-control" required />
         </div>
+
         <div class="row">
-            <div class="mb-3 col-md-4">
-                <label for="price" class="form-label">Price</label>
-                <input
-                  type="text"
-                  name="listing[price]"
-                  id="price"
-                  class="form-control"
-                  placeholder="Enter Price"
-                  required
-                />
-                <div class="invalid-feedback">Price should be valid</div>
+          <div class="mb-3 col-md-6">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" name="listing[location]" id="location" placeholder="Enter Location" class="form-control" required />
+            <div class="invalid-feedback">Location should be valid</div>
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" name="listing[country]" id="country" placeholder="Enter Country" class="form-control" required />
+            <div class="invalid-feedback">Country should be valid</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-md-6">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" name="listing[price]" id="price" class="form-control" placeholder="Enter Price" min="0" required />
+            <div class="invalid-feedback">Price should be valid</div>
+          </div>
+
+          <div class="mb-3 col-md-6">
+            <label for="category" class="form-label">Category</label>
+            <select name="listing[category]" id="category" class="form-control" required>
+              <option value="">Select a category</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Resort">Resort</option>
+              <option value="Villa">Villa</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Cottage">Cottage</option>
+              <option value="Cottage">Home</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="invalid-feedback">Please select a category</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-md-6">
+              <label for="numberOfRooms" class="form-label">Number of Rooms</label>
+              <input type="number" name="listing[numberOfRooms]" id="numberOfRooms" class="form-control" placeholder="Enter number of rooms" min="1" required />
+              <div class="invalid-feedback">Number of rooms should be valid</div>
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="numberOfGuests" class="form-label">Number of Guests</label>
+            <input type="number" name="listing[numberOfGuests]" id="numberOfGuests" class="form-control" placeholder="Enter number of Guests allowed" min="1" required />
+            <div class="invalid-feedback">Number of Guests should be valid</div>
+        </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Amenities</label>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="WiFi" id="wifi">
+                <label class="form-check-label" for="wifi">WiFi</label>
               </div>
-              <div class="mb-3 col-md-8">
-                <label for="location" class="form-label">Location</label>
-                <input
-                  type="text"
-                  name="listing[location]"
-                  id="location"
-                  placeholder="Enter Location"
-                  class="form-control"
-                  required
-                />
-                <div class="invalid-feedback">Location should be valid</div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Parking" id="parking">
+                <label class="form-check-label" for="parking">Parking</label>
               </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Pool" id="pool">
+                <label class="form-check-label" for="pool">Pool</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Spa" id="spa">
+                <label class="form-check-label" for="spa">Spa</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Restaurant" id="restaurant">
+                <label class="form-check-label" for="restaurant">Restaurant</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Gym" id="gym">
+                <label class="form-check-label" for="gym">Gym</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Air Conditioning" id="ac">
+                <label class="form-check-label" for="ac">Air Conditioning</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="listing[amenities][]" value="Room Service" id="roomService">
+                <label class="form-check-label" for="roomService">Room Service</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Property Contact Info</label>
+          <div class="row">
+            <div class="col-md-6">
+              <input type="text" step="any" name="listing[contactPhone]" class="form-control" placeholder="Property mobile number" required />
+              <div class="invalid-feedback">Please enter Contact Number</div>
+            </div>
+            <div class="col-md-6">
+              <input type="text" step="any" name="listing[contactEmail]" class="form-control" placeholder="Property email" required />
+              <div class="invalid-feedback">Please enter Contact Email</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="privacyPolicy" class="form-label">Privacy Policy</label>
+          <textarea name="listing[privacyPolicy]" id="privacyPolicy" class="form-control" rows="4" placeholder="Write your privacy policy here..." required></textarea>
+          <div class="invalid-feedback">Please provide your privacy policy.</div>
         </div>
         
         <div class="mb-3">
-          <label for="country" class="form-label">Country</label>
-          <input
-            type="text"
-            name="listing[country]"
-            id="country"
-            placeholder="Enter Country"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Country should be valid</div>
+          <label for="terms" class="form-label">Terms & Conditions</label>
+          <textarea name="listing[terms]" id="terms" class="form-control" rows="4" placeholder="Write your terms & conditions here..." required></textarea>
+          <div class="invalid-feedback">Please provide your terms and conditions.</div>
         </div>
-        <br>
-        <button class="btn btn-dark add-btn">Create</button>
-        <br><br>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="listing[agreeToPolicy]" id="agreeToPolicy" required />
+          <label class="form-check-label" for="agreeToPolicy">
+            I agree to the <a href="/terms" target="_blank">Terms & Conditions</a> and <a href="/privacy" target="_blank">Privacy Policy</a>
+          </label>
+          <div class="invalid-feedback">You must agree before submitting.</div>
+        </div>
+
+        <button class="btn btn-dark add-btn">Add</button>
       </form>
     </div>
   </div>
+
+  <script>
+    (() => {
+      'use strict'
+      const forms = document.querySelectorAll('.needs-validation')
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+  </script>
 </body>
+
+
+

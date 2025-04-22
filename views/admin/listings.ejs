@@ -1,0 +1,112 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Listing Management</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Filters</h5>
+            <form id="filterForm" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Resort">Resort</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Cottage">Cottage</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Price Range</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="minPrice" placeholder="Min">
+                        <input type="number" class="form-control" id="maxPrice" placeholder="Max">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="locationFilter" placeholder="Search location">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Rating</label>
+                    <select class="form-select" id="ratingFilter">
+                        <option value="">All Ratings</option>
+                        <option value="4">4+ Stars</option>
+                        <option value="3">3+ Stars</option>
+                        <option value="2">2+ Stars</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Price</th>
+                    <th>Rating</th>
+                    <th>Owner</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% listings.forEach(listing => { %>
+                <tr>
+                    <td><%= listing.title %></td>
+                    <td><%= listing.category %></td>
+                    <td><%= listing.location %>, <%= listing.country %></td>
+                    <td>$<%= listing.price %></td>
+                    <td><%= listing.rating.toFixed(1) %> ★</td>
+                    <td><%= listing.owner.username %></td>
+                    <td>
+                        <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-info">View</a>
+                        <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                        <form class="d-inline" action="/admin/listings/<%= listing._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this listing?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Client-side filtering
+    document.querySelectorAll('#filterForm select, #filterForm input').forEach(element => {
+        element.addEventListener('change', filterListings);
+        element.addEventListener('keyup', filterListings);
+    });
+
+    function filterListings() {
+        const category = document.getElementById('categoryFilter').value.toLowerCase();
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const location = document.getElementById('locationFilter').value.toLowerCase();
+        const rating = document.getElementById('ratingFilter').value;
+
+        document.querySelectorAll('tbody tr').forEach(row => {
+            const rowCategory = row.cells[1].textContent.toLowerCase();
+            const rowPrice = parseFloat(row.cells[3].textContent.replace('$', ''));
+            const rowLocation = row.cells[2].textContent.toLowerCase();
+            const rowRating = parseFloat(row.cells[4].textContent);
+
+            let show = true;
+
+            if (category && !rowCategory.includes(category)) show = false;
+            if (minPrice && rowPrice < minPrice) show = false;
+            if (maxPrice && rowPrice > maxPrice) show = false;
+            if (location && !rowLocation.includes(location)) show = false;
+            if (rating && rowRating < parseFloat(rating)) show = false;
+
+            row.style.display = show ? '' : 'none';
+        });
+    }
+</script>

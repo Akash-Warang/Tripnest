@@ -1,20 +1,265 @@
 <% layout('layouts/boilerplate') -%>
 <body>
-    <h3>All Listings</h3>
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+
+  <style>
+    #filters {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #495057;
+    }
+
+    .form-select, .form-control {
+      border-radius: 0.5rem;
+      border: 1px solid #ced4da;
+      padding: 0.5rem;
+    }
+
+    .form-select:focus, .form-control:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+
+    .price-range {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-filter {
+      background: #fe424d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn-filter:hover {
+      background: #e63946;
+      transform: translateY(-2px);
+    }
+
+
+    .listing-card {
+      transition: transform 0.3s;
+      margin-bottom: 2rem;
+      border: none;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .listing-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .amenities-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .dropdown-menu {
+      padding: 0.5rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .dropdown-item {
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .dropdown-item:hover {
+      background: #fe424d;
+      color: white;
+    }
+    .dropdown-item input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    .amenity-badge {
+      background: #e9ecef;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.8rem;
+      color: #495057;
+    }
+
+  </style>
+
+    <!-- <h3>All Listings</h3> -->
+     <div id="filters" class="mb-4">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="filter-group">
+            <label class="filter-label">Property Type</label>
+            <select class="form-select" id="categoryFilter">
+              <option value="">All Types</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Resort">Resort</option>
+              <option value="Villa">Villa</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Cottage">Cottage</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="filter-group">
+            <label class="filter-label">Room Type</label>
+            <select class="form-select" id="roomTypeFilter">
+              <option value="">All Rooms</option>
+              <option value="Single">Single Room</option>
+              <option value="Double">Double Room</option>
+              <option value="Suite">Suite</option>
+              <option value="Deluxe">Deluxe Room</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="filter-group">
+            <label class="filter-label">Guest Capacity</label>
+            <select class="form-select" id="capacityFilter">
+              <option value="">Any</option>
+              <option value="1-2">1-2 Guests</option>
+              <option value="3-4">3-4 Guests</option>
+              <option value="5-6">5-6 Guests</option>
+              <option value="7+">7+ Guests</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="filter-group">
+            <label class="filter-label">Amenities</label>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="amenityDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Select Amenities
+              </button>
+              <ul class="dropdown-menu w-100" aria-labelledby="amenityDropdown" id="amenityFilter">
+                <li><label class="dropdown-item"><input type="checkbox" value="WiFi"> WiFi</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Parking"> Parking</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Pool"> Pool</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Spa"> Spa</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Restaurant"> Restaurant</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Gym"> Gym</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Air Conditioning"> Air Conditioning</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Room Service"> Room Service</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Beach Access"> Beach Access</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" value="Business Center"> Business Center</label></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="filter-group">
+            <label class="filter-label">Price Range</label>
+            <div class="price-range">
+              <input type="number" class="form-control" id="minPrice" placeholder="Min">
+              <span>to</span>
+              <input type="number" class="form-control" id="maxPrice" placeholder="Max">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="filter-group">
+            <label class="filter-label">Rating</label>
+            <select class="form-select" id="ratingFilter">
+              <option value="">All Ratings</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4+ Stars</option>
+              <option value="3">3+ Stars</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <button class="btn btn-filter w-100 mt-3" id="applyFilters">Apply Filters</button>
+        </div>
+      </div>
+     </div>
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
     <% for (let data of allList){ %>
-        <a href="/listings/<%=data._id%>" class="card-listing-link">
-            <div class="card col listing-card" >
-                <img src="<%=data.image%>" class="card-img-top" alt="listing" style="height: 20rem"/>
-                <div class="card-img-overlay"></div>
-                <div class="card-body">
-                  <p class="card-text">
-                      <b><%=data.title %></b> <br>
-                      &#8377; <%=data.price.toLocaleString("en-IN")%>
-                  </p>
+        <a href="/listings/<%=data._id%>" class="card-listing-link" data-category="<%=data.category%>" data-price="<%=data.price%>" data-rating="<%=data.rating%>" data-amenities='<%=JSON.stringify(data.amenities)%>'>
+            <div class="card col listing-card">
+                <img src="<%=data.image.url%>" class="card-img-top" alt="listing" style="height: 20rem"/>
+                <div class="card-img-overlay">
+                    <span class="badge bg-light text-dark position-absolute top-0 end-0 m-3">
+                        <i class="fas fa-star text-warning"></i> <%= data.rating.toFixed(1) %>
+                        <!-- <span class="stars" style="color: #ffc107;"><%= '★'.repeat(Math.round(data.rating)) %><%= '☆'.repeat(5 - Math.round(data.rating)) %></span> -->
+                    </span>
                 </div>
-              </div>
-              <%}%>
+                <div class="card-body">
+                    <h5 class="card-title mb-2"><%=data.title %></h5>
+                    <p class="card-text text-muted mb-2">
+                        <i class="fas fa-map-marker-alt"></i> <%= data.location %>
+                    </p>
+                    <div class="rating-display mb-2">
+                        <span class="badge bg-success">
+                            <i class="fas fa-star"></i> <%= data.rating.toFixed(1) %>
+                        </span>
+                        <span class="stars ms-2">
+                            <% for(let i = 1; i <= 5; i++) { %>
+                                <i class="fas fa-star <%= i <= data.rating ? 'text-warning' : 'text-muted' %>"></i>
+                            <% } %>
+                        </span>
+                    </div>
+                    <div class="listing-details">
+                        <div class="listing-detail">
+                            <i class="fas fa-home"></i>
+                            <span><%= data.category %></span>
+                        </div>
+                        <div class="listing-detail">
+                            <i class="fas fa-bed"></i>
+                            <span><%= data.numberOfRooms || 'N/A' %> room</span>
+                        </div>
+                        <div class="listing-detail">
+                          <i class="fas fa-users"></i>
+                          <span><%= data.numberOfGuests || 'N/A' %> guests</span>
+                      </div>
+                        <div class="listing-detail">
+                            <i class="fas fa-bath"></i>
+                            <span><%= data.amenities.length || 'N/A' %>+ Amenities</span>
+                        </div>
+                    </div>
+                    <div class="amenities-list mb-2">
+                        <% data.amenities.forEach(amenity => { %>
+                            <span class="amenity-badge"><%= amenity %></span>
+                        <% }) %>
+                    </div>
+                    <div class="contact-info mb-2">
+                        <p class="mb-1"><i class="fas fa-phone"></i> <%= data.contactPhone || 'Not provided' %></p>
+                        <p class="mb-0"><i class="fas fa-envelope"></i> <%= data.contactEmail || 'Not provided' %></p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="h5 mb-0">&#8377; <%=data.price.toLocaleString("en-IN")%></span>
+                            <span class="text-muted">/night</span>
+                            <i class="tax-info d-block">&nbsp;+18% GST</i>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary">View Details</button>
+                    </div>
+                </div>
             </div>
         </a>
+    <% } %>
+</div>
 </body>
+

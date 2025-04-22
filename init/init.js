@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Listing = require("../Models/listing.js");
+const Reviews = require("../Models/review.js");
 const initData = require("./data.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/tripnest";
@@ -18,6 +19,7 @@ async function main() {
 
 //initialization
 const initDB = async () => {
+  await Reviews.deleteMany({});
   await Listing.deleteMany({});
   initData.data = initData.data.map((obj) => ({
     ...obj,

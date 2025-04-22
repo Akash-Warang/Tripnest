@@ -1,0 +1,94 @@
+<% layout("layouts/boilerplate") %>
+<link rel="stylesheet" href="/css/admin.css">
+
+<div class="admin-dashboard">
+    <div class="container">
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h1 class="m-0">Admin Dashboard</h1>
+            </div>
+        </div>
+
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= users.length %></h3>
+                    <p>Total Users</p>
+                </div>
+                <a href="/admin/users" class="admin-btn admin-btn-primary ms-auto">Manage</a>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= listings.length %></h3>
+                    <p>Total Listings</p>
+                </div>
+                <a href="/admin/listings" class="admin-btn admin-btn-primary ms-auto">Manage</a>
+            </div>
+        </div>
+
+    <div class="admin-card mt-4">
+        <div class="admin-card-header d-flex justify-content-between align-items-center">
+            <h5 class="m-0">Recent Listings</h5>
+            <div class="admin-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="listingSearch" placeholder="Search listings..." class="form-control">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Owner</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% listings.slice(0, 5).forEach(listing => { %>
+                    <tr>
+                        <td><%= listing.title %></td>
+                        <td><%= listing.owner.username %></td>
+                        <td><%= listing.location %></td>
+                        <td>$<%= listing.price %></td>
+                        <td>
+                            <a href="/listings/<%= listing._id %>" class="admin-btn admin-btn-info me-2">View</a>
+                            <form class="d-inline" action="/admin/listings/<%= listing._id %>?_method=DELETE" method="POST">
+                                <button class="admin-btn admin-btn-danger" onclick="return confirm('Are you sure you want to delete this listing?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Search functionality
+    document.getElementById('listingSearch').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.admin-table tbody tr');
+        
+        rows.forEach(row => {
+            const title = row.cells[0].textContent.toLowerCase();
+            const owner = row.cells[1].textContent.toLowerCase();
+            const location = row.cells[2].textContent.toLowerCase();
+            
+            if (title.includes(searchValue) || owner.includes(searchValue) || location.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>

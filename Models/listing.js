@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const review = require("./review");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
 
@@ -12,18 +11,60 @@ const listingSchema = new Schema({
     type: String,
   },
   image: {
-    type: String,
-    default: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGxha2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
-    set: (v) => (v.trim() === "" ? undefined : v)
+    url: String,
+    filename: String
   },
   price: {
     type: Number,
+    required: true,
+    min: 0
   },
   location: {
     type: String,
+    required: true
   },
   country: {
     type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    enum: ['Hotel', 'Resort', 'Villa', 'Apartment', 'Cottage', 'Home', 'Other'],
+    required: true
+  },
+  amenities: [{
+    type: String,
+    enum: ['WiFi', 'Parking', 'Pool', 'Spa', 'Restaurant', 'Gym', 'Air Conditioning', 'Room Service']
+  }],
+  numberOfRooms:{
+    type: Number,
+    required: true,
+    min: 1
+  },
+  numberOfGuests:{
+    type:Number
+  },
+  contactPhone:{
+    type:String
+  },
+  contactEmail:{
+    type:String
+  },
+  privacyPolicy:{
+    type:String,
+  },
+  terms:{
+    type:String,
+  },
+  agreeToPolicy: {
+    type: Boolean,
+    required: true,  // This ensures the user has agreed to the policy
+  },
+  rating:{
+    default: 1,
+    type : Number,
+        min : 1,
+        max : 5,
   },
   reviews: [
     {
@@ -33,14 +74,36 @@ const listingSchema = new Schema({
   ],
   owner: {
     type: Schema.Types.ObjectId, ref: 'User'
-  } 
+  },
+  geometry: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ['Point'], // 'location.type' must be 'Point'
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  }
 });
 
 listingSchema.post("findOneAndDelete", async(listing) =>{
   if(listing){
     await Review.deleteMany({_id : {$in : listing.reviews}})
   }
-})
+});
+
+listingSchema.methods.calculateAvgRating = async function () {
+  await this.populate('reviews');
+  if (this.reviews.length) {
+    let sum = this.reviews.reduce((total, review) => total + review.rating, 0);
+    this.rating = sum / this.reviews.length;
+  } else {
+    this.rating = 0;
+  }
+  await this.save();
+};
 
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;

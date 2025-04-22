@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
+
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -14,6 +18,7 @@ const User = require("./Models/user.js");
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const adminRouter = require("./routes/admin.js");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -25,13 +30,14 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.json());
 
 const sessionOptions = {
-  secret: "mysupersecretkey",
+  secret: process.env.SESSION_SECRET || "mysupersecretkey",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production"
   },
 };
 
@@ -65,7 +71,8 @@ app.get("/", (req, res) => {
   res.send("app is working");
 });
 
-app.use((req, res, next) => {                     //local variables
+app.use((req, res, next) => {
+  //local variables
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
@@ -74,18 +81,19 @@ app.use((req, res, next) => {                     //local variables
 
 // app.get("/demouser", async(req,res)=>{
 //   let fakeUser = new User({
-//     email : "student@123",   
-//     username : "fakeuser"                                                //FakeUser 
+//     email : "student@123",
+//     username : "fakeuser"                                                //FakeUser
 //   });
 
 //   let registeredUser = await User.register(fakeUser, "helloworld");
-//   res.send(registeredUser); 
+//   res.send(registeredUser);
 // })
 
 //Routes App.js
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
+app.use("/admin", adminRouter);
 
 //Error Handling
 // app.all("(.*)", (req, res, next) => {
@@ -103,8 +111,8 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   let { statusCode = 500, message = "Something went wrong!" } = err;
-  res.status(statusCode).render("err", { message });
-  // res.status(statusCode).send(message);
+  if (!err.message) err.message = "Oh No, Something Went Wrong!";
+  res.status(statusCode).render("err", { message: err.message });
 });
 
 app.listen(8080, () => {
