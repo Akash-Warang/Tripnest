@@ -31,6 +31,17 @@
                 </div>
                 <a href="/admin/listings" class="admin-btn admin-btn-primary ms-auto">Manage</a>
             </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= listings.filter(l => l.verificationStatus === 'pending').length %></h3>
+                    <p>Pending Verifications</p>
+                </div>
+                <a href="/admin/pending-listings" class="admin-btn admin-btn-warning ms-auto">Verify</a>
+            </div>
         </div>
 
     <div class="admin-card mt-4">

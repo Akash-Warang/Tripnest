@@ -1,0 +1,62 @@
+<%- layout("layouts/boilerplate") %>
+
+<link rel="stylesheet" href="/css/admin.css">
+
+<div class="admin-container">
+    <h2>Pending Listings</h2>
+    
+    <div class="listing-grid">
+        <% if (listings && listings.length > 0) { %>
+            <% for (let listing of listings) { %>
+                <div class="listing-card">
+                    <div class="listing-image">
+                        <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+                    </div>
+                    <div class="listing-details">
+                        <h3><%= listing.title %></h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> <%= listing.location %>, <%= listing.country %></p>
+                        <p class="owner">Owner: <%= listing.owner.username %></p>
+                        <p class="price">$<%= listing.price %> per night</p>
+                        <p class="description"><%= listing.description.substring(0, 100) %>...</p>
+                        
+                        <div class="verification-actions">
+                            <form action="/admin/listings/<%= listing._id %>/verify" method="POST" class="d-inline">
+                                <input type="hidden" name="action" value="approve">
+                                <button class="btn btn-success">Approve</button>
+                            </form>
+                            
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal<%= listing._id %>">Reject</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reject Modal -->
+                <div class="modal fade" id="rejectModal<%= listing._id %>" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Reject Listing</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form action="/admin/listings/<%= listing._id %>/verify" method="POST">
+                                <div class="modal-body">
+                                    <input type="hidden" name="action" value="reject">
+                                    <div class="mb-3">
+                                        <label for="message" class="form-label">Rejection Reason</label>
+                                        <textarea class="form-control" name="message" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Reject Listing</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
+            <p class="no-listings">No pending listings to review.</p>
+        <% } %>
+    </div>
+</div>

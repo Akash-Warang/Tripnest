@@ -1,25 +1,38 @@
 const User = require("../Models/user.js");
+const { userSchema } = require("../schemas/userSchema");
 
 module.exports.renderSignupForm = (req, res) => {
     res.render("users/signup.ejs");
-  }
+}
 
-module.exports.signup = async (req, res) => {
+module.exports.signup = async (req, res, next) => {
     try {
-      const { username, email, password } = req.body;
-      const newUser = new User({ username, email });
-      const registeredUser = await User.register(newUser, password);
-      console.log(registeredUser);
-      req.login(registeredUser, (err) => {
-        if (err) {
-          return next(err);
+        // Validate user input against schema
+        const { error } = userSchema.validate(req.body);
+        if (error) {
+            const msg = error.details.map(el => el.message).join(',');
+            req.flash("error", msg);
+            return res.redirect("/signup");
         }
-        req.flash("success", "Welcome to tripnest.!");
-        res.redirect("/listings");
-      });
+
+        const { username, email, password, firstName, lastName } = req.body;
+        const newUser = new User({ 
+            username, 
+            email,
+            firstName,
+            lastName
+        });
+
+        const registeredUser = await User.register(newUser, password);
+        
+        req.login(registeredUser, (err) => {
+            if (err) return next(err);
+            req.flash("success", "Welcome to TripNest! Your account has been created successfully.");
+            res.redirect("/listings");
+        });
     } catch (e) {
-      req.flash("error", e.message);
-      res.redirect("/signup");
+        req.flash("error", e.message);
+        res.redirect("/signup");
     }
   }
 

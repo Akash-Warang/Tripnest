@@ -4,8 +4,48 @@ const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 module.exports.index = async (req, res) => {
-  const allList = await Listing.find({});
-  res.render("./listings/index.ejs", { allList });
+  const { category, minPrice, maxPrice, location, amenities, capacity, rating } = req.query;
+
+  // Build filter query
+  let filter = { verificationStatus: 'approved' };
+
+  if (category) {
+    filter.category = category;
+  }
+
+  if (minPrice || maxPrice) {
+    filter.price = {};
+    if (minPrice) filter.price.$gte = Number(minPrice);
+    if (maxPrice) filter.price.$lte = Number(maxPrice);
+  }
+
+  if (location) {
+    filter.location = { $regex: new RegExp(location, 'i') };
+  }
+
+  if (amenities) {
+    const amenitiesArray = Array.isArray(amenities) ? amenities : [amenities];
+    filter.amenities = { $all: amenitiesArray };
+  }
+
+  if (capacity) {
+    const [min, max] = capacity.split('-');
+    if (max === '+') {
+      filter.numberOfGuests = { $gte: Number(min) };
+    } else {
+      filter.numberOfGuests = { 
+        $gte: Number(min), 
+        $lte: Number(max || min)
+      };
+    }
+  }
+
+  if (rating) {
+    filter.rating = { $gte: Number(rating) };
+  }
+
+  const allList = await Listing.find(filter);
+  res.render("./listings/index.ejs", { allList, filters: req.query });
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -42,7 +82,7 @@ module.exports.createNewListing = async (req, res, next) => {
     };
 
     await list.save();
-    req.flash("success", "New Listing Created!");
+    req.flash("success", "Listing created successfully! It will be visible after admin approval.");
     res.redirect("/listings");
   } catch (err) {
     console.error("Error creating listing:", err);

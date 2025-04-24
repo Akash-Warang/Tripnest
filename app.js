@@ -19,6 +19,7 @@ const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const adminRouter = require("./routes/admin.js");
+const infoRouter = require("./routes/info.js");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -66,11 +67,6 @@ async function main() {
   mongoose.connect(MONGO_URL);
 }
 
-//Routes App.js
-app.get("/", (req, res) => {
-  res.send("app is working");
-});
-
 app.use((req, res, next) => {
   //local variables
   res.locals.success = req.flash("success");
@@ -79,21 +75,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get("/demouser", async(req,res)=>{
-//   let fakeUser = new User({
-//     email : "student@123",
-//     username : "fakeuser"                                                //FakeUser
-//   });
+//Routes App.js 
 
-//   let registeredUser = await User.register(fakeUser, "helloworld");
-//   res.send(registeredUser);
-// })
-
-//Routes App.js
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
+app.use("/", infoRouter);
 
 //Error Handling
 // app.all("(.*)", (req, res, next) => {

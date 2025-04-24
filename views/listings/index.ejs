@@ -191,7 +191,16 @@
           </div>
         </div>
         <div class="col-md-3 d-flex align-items-center">
-          <button class="btn btn-filter w-100 mt-3" id="applyFilters">Apply Filters</button>
+          <form action="/listings" method="GET" class="w-100" id="filterForm">
+            <input type="hidden" name="category" id="categoryInput">
+            <input type="hidden" name="minPrice" id="minPriceInput">
+            <input type="hidden" name="maxPrice" id="maxPriceInput">
+            <input type="hidden" name="location" id="locationInput">
+            <input type="hidden" name="capacity" id="capacityInput">
+            <input type="hidden" name="rating" id="ratingInput">
+            <div id="amenitiesInputContainer"></div>
+            <button type="submit" class="btn btn-filter w-100 mt-3">Apply Filters</button>
+          </form>
         </div>
       </div>
      </div>
@@ -261,5 +270,59 @@
         </a>
     <% } %>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set initial values from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('category')) {
+        document.getElementById('categoryFilter').value = urlParams.get('category');
+    }
+    if (urlParams.get('minPrice')) {
+        document.getElementById('minPrice').value = urlParams.get('minPrice');
+    }
+    if (urlParams.get('maxPrice')) {
+        document.getElementById('maxPrice').value = urlParams.get('maxPrice');
+    }
+    if (urlParams.get('capacity')) {
+        document.getElementById('capacityFilter').value = urlParams.get('capacity');
+    }
+    if (urlParams.get('rating')) {
+        document.getElementById('ratingFilter').value = urlParams.get('rating');
+    }
+    if (urlParams.getAll('amenities')) {
+        const amenities = urlParams.getAll('amenities');
+        amenities.forEach(amenity => {
+            const checkbox = document.querySelector(`input[type="checkbox"][value="${amenity}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+
+    // Handle form submission
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Update hidden inputs
+        document.getElementById('categoryInput').value = document.getElementById('categoryFilter').value;
+        document.getElementById('minPriceInput').value = document.getElementById('minPrice').value;
+        document.getElementById('maxPriceInput').value = document.getElementById('maxPrice').value;
+        document.getElementById('capacityInput').value = document.getElementById('capacityFilter').value;
+        document.getElementById('ratingInput').value = document.getElementById('ratingFilter').value;
+        
+        // Handle amenities
+        const amenitiesContainer = document.getElementById('amenitiesInputContainer');
+        amenitiesContainer.innerHTML = '';
+        const checkedAmenities = document.querySelectorAll('#amenityFilter input[type="checkbox"]:checked');
+        checkedAmenities.forEach(checkbox => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'amenities';
+            input.value = checkbox.value;
+            amenitiesContainer.appendChild(input);
+        });
+
+        this.submit();
+    });
+});
+</script>
 </body>
 
