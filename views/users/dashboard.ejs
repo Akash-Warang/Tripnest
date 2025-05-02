@@ -1,0 +1,113 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Section -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profile</h5>
+                    <div class="text-center mb-3">
+                        <img src="<%= currentUser.avatar || '/images/default_avatar.jpg' %>" class="rounded-circle" width="100">
+                    </div>
+                    <form id="profileForm" action="/users/profile" method="POST" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" value="<%= currentUser.username %>" required minlength="3" maxlength="30">
+                            <div class="invalid-feedback">Username must be between 3 and 30 characters</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="<%= currentUser.email %>" required>
+                            <div class="invalid-feedback">Please enter a valid email address</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-control" name="phone" value="<%= currentUser.phone %>" pattern="[0-9]{10}">
+                            <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <div id="updateStatus" class="mt-2" style="display: none;"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Section -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">My Bookings</h5>
+                    <ul class="nav nav-tabs" id="bookingTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="current-tab" data-bs-toggle="tab" href="#current" role="tab">Current</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="past-tab" data-bs-toggle="tab" href="#past" role="tab">Past</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="bookingTabContent">
+                        <div class="tab-pane fade show active" id="current" role="tabpanel">
+                            <% if (currentBookings && currentBookings.length > 0) { %>
+                                <% currentBookings.forEach(booking => { %>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Booking #<%= booking._id %></h6>
+                                            <p class="card-text">
+                                                <strong>Property:</strong> <%= booking.listing.title %><br>
+                                                <strong>Check-in:</strong> <%= booking.checkIn.toLocaleDateString() %><br>
+                                                <strong>Check-out:</strong> <%= booking.checkOut.toLocaleDateString() %><br>
+                                                <strong>Status:</strong> <%= booking.status %><br>
+                                                <strong>Total Amount:</strong> ₹<%= booking.totalAmount %>
+                                            </p>
+                                            <div class="btn-group">
+                                                <a href="/bookings/<%= booking._id %>" class="btn btn-info btn-sm">View Details</a>
+                                                <% if (booking.status === 'pending') { %>
+                                                    <a href="/bookings/<%= booking._id %>/pay" class="btn btn-success btn-sm">Pay Now</a>
+                                                <% } %>
+                                                <% if (!booking.isPast) { %>
+                                                    <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST" class="d-inline">
+                                                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                                    </form>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="text-muted">No current bookings found.</p>
+                            <% } %>
+                        </div>
+                        <div class="tab-pane fade" id="past" role="tabpanel">
+                            <% if (pastBookings && pastBookings.length > 0) { %>
+                                <% pastBookings.forEach(booking => { %>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Booking #<%= booking._id %></h6>
+                                            <p class="card-text">
+                                                <strong>Property:</strong> <%= booking.listing.title %><br>
+                                                <strong>Check-in:</strong> <%= booking.checkIn.toLocaleDateString() %><br>
+                                                <strong>Check-out:</strong> <%= booking.checkOut.toLocaleDateString() %><br>
+                                                <strong>Status:</strong> <%= booking.status %><br>
+                                                <strong>Total Amount:</strong> ₹<%= booking.totalAmount %>
+                                            </p>
+                                            <a href="/bookings/<%= booking._id %>" class="btn btn-info btn-sm">View Details</a>
+                                            <% if (!booking.hasReview) { %>
+                                                <a href="/listings/<%= booking.listing._id %>/reviews/new" class="btn btn-primary btn-sm">Write Review</a>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="text-muted">No past bookings found.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/css/dashboard.css">
+<script src="/js/dashboard.js"></script>

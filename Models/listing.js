@@ -50,15 +50,6 @@ const listingSchema = new Schema({
   contactEmail:{
     type:String
   },
-  verificationStatus: {
-    type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
-  },
-  verificationMessage: {
-    type: String,
-    default: ''
-  },
   privacyPolicy:{
     type:String,
   },

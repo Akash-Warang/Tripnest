@@ -1,0 +1,124 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Stats Overview -->
+        <div class="col-md-12 mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card stats-card bg-primary text-white">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Revenue</h6>
+                            <h3>₹<%= totalRevenue %></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card bg-success text-white">
+                        <div class="card-body">
+                            <h6 class="card-title">Active Listings</h6>
+                            <h3><%= activeListings %></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card bg-info text-white">
+                        <div class="card-body">
+                            <h6 class="card-title">Pending Bookings</h6>
+                            <h3><%= pendingBookings %></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card bg-warning text-white">
+                        <div class="card-body">
+                            <h6 class="card-title">Occupancy Rate</h6>
+                            <h3><%= occupancyRate %>%</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Revenue Overview</h5>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Activity</h5>
+                    <div class="activity-feed">
+                        <% recentActivity.forEach(activity => { %>
+                            <div class="activity-item">
+                                <span class="activity-date"><%= activity.date.toLocaleDateString() %></span>
+                                <p><%= activity.description %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listings Management -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title">My Listings</h5>
+                        <a href="/listings/new" class="btn btn-primary">Add New Listing</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Bookings</th>
+                                    <th>Rating</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% listings.forEach(listing => { %>
+                                    <tr>
+                                        <td><%= listing.title %></td>
+                                        <td>₹<%= listing.price %></td>
+                                        <td>
+                                            <span class="badge <%= listing.status === 'active' ? 'bg-success' : 'bg-warning' %>">
+                                                <%= listing.status %>
+                                            </span>
+                                        </td>
+                                        <td><%= listing.bookingsCount %></td>
+                                        <td><%= listing.averageRating.toFixed(1) %> ⭐</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-info">Edit</a>
+                                                <a href="/listings/<%= listing._id %>/bookings" class="btn btn-sm btn-primary">View Bookings</a>
+                                                <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/css/dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/owner-dashboard.js"></script>

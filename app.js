@@ -20,6 +20,7 @@ const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const adminRouter = require("./routes/admin.js");
 const infoRouter = require("./routes/info.js");
+const bookingRouter = require("./routes/booking.js");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -29,6 +30,7 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.json());
+
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "mysupersecretkey",
@@ -77,11 +79,20 @@ app.use((req, res, next) => {
 
 //Routes App.js 
 
+// Listing and Review routes
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
-app.use("/", userRouter);
+
+// Admin routes
 app.use("/admin", adminRouter);
-app.use("/", infoRouter);
+
+// Booking routes
+app.use("/bookings", bookingRouter);
+
+app.use("/", userRouter);
+app.use("/users", userRouter);
+app.use("/info", infoRouter);
+
 
 //Error Handling
 // app.all("(.*)", (req, res, next) => {

@@ -1,0 +1,97 @@
+<% layout('layouts/boilerplate') %>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Book <%= listing.title %></h2>
+                    
+                    <form action="/listings/<%= listing._id %>/book" method="POST" novalidate class="needs-validation">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="checkIn" class="form-label">Check-in Date</label>
+                                <input type="date" class="form-control" id="checkIn" name="booking[checkIn]" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="checkOut" class="form-label">Check-out Date</label>
+                                <input type="date" class="form-control" id="checkOut" name="booking[checkOut]" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="numberOfGuests" class="form-label">Number of Guests</label>
+                            <input type="number" class="form-control" id="numberOfGuests" name="booking[numberOfGuests]" 
+                                min="1" max="<%= listing.numberOfGuests %>" required>
+                            <div class="form-text">Maximum guests allowed: <%= listing.numberOfGuests %></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="specialRequests" class="form-label">Special Requests (Optional)</label>
+                            <textarea class="form-control" id="specialRequests" name="booking[specialRequests]" rows="3"></textarea>
+                        </div>
+
+                        <div class="price-calculation mb-4">
+                            <h5>Price Details</h5>
+                            <div id="priceBreakdown">
+                                <p>Price per night: &#8377;<%= listing.price %></p>
+                                <p>Total nights: <span id="totalNights">0</span></p>
+                                <p>Total price: $<span id="totalPrice">0</span></p>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                        <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script >
+    // Date validation and price calculation
+    const checkInInput = document.getElementById('checkIn');
+    const checkOutInput = document.getElementById('checkOut');
+    const totalNightsSpan = document.getElementById('totalNights');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    const pricePerNight = <%= listing.price %>;
+
+    // Set minimum dates
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    checkInInput.min = today.toISOString().split('T')[0];
+    checkOutInput.min = tomorrow.toISOString().split('T')[0];
+
+    function updatePriceCalculation() {
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+
+        if (checkIn && checkOut && checkOut > checkIn) {
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const totalPrice = nights * pricePerNight;
+            
+            totalNightsSpan.textContent = nights;
+            totalPriceSpan.textContent = totalPrice;
+        } else {
+            totalNightsSpan.textContent = '0';
+            totalPriceSpan.textContent = '0';
+        }
+    }
+
+    checkInInput.addEventListener('change', function() {
+        // Set minimum check-out date to day after check-in
+        const minCheckOut = new Date(this.value);
+        minCheckOut.setDate(minCheckOut.getDate() + 1);
+        checkOutInput.min = minCheckOut.toISOString().split('T')[0];
+        
+        if (new Date(checkOutInput.value) <= new Date(this.value)) {
+            checkOutInput.value = minCheckOut.toISOString().split('T')[0];
+        }
+        
+        updatePriceCalculation();
+    });
+
+    checkOutInput.addEventListener('change', updatePriceCalculation);
+</script>

@@ -1,0 +1,76 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Booking Details</h2>
+                    
+                    <div class="booking-info">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h5>Property Details</h5>
+                                <p><strong>Property:</strong> <%= booking.listing.title %></p>
+                                <p><strong>Location:</strong> <%= booking.listing.location %></p>
+                                <p><strong>Category:</strong> <%= booking.listing.category %></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Booking Information</h5>
+                                <p><strong>Check-in:</strong> <%= booking.checkIn.toLocaleDateString() %></p>
+                                <p><strong>Check-out:</strong> <%= booking.checkOut.toLocaleDateString() %></p>
+                                <p><strong>Guests:</strong> <%= booking.numberOfGuests %></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h5>Payment Details</h5>
+                                <p><strong>Total Price:</strong> &#8377;<%= booking.totalPrice %></p>
+                                <p><strong>Payment Status:</strong> 
+                                    <span class="badge <%= booking.paymentStatus === 'paid' ? 'bg-success' : 'bg-warning' %>">
+                                        <%= booking.paymentStatus %>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Booking Status</h5>
+                                <p>
+                                    <span class="badge <%= 
+                                        booking.status === 'confirmed' ? 'bg-success' : 
+                                        booking.status === 'cancelled' ? 'bg-danger' : 
+                                        booking.status === 'completed' ? 'bg-info' : 'bg-warning'
+                                    %>">
+                                        <%= booking.status %>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <% if (booking.specialRequests) { %>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5>Special Requests</h5>
+                                <p><%= booking.specialRequests %></p>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <% if (booking.status === 'pending' || booking.status === 'confirmed') { %>
+                                    <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST" class="d-inline">
+                                        <button class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                            Cancel Booking
+                                        </button>
+                                    </form>
+                                <% } %>
+                                <a href="/bookings" class="btn btn-secondary">Back to My Bookings</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

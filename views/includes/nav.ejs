@@ -46,25 +46,46 @@
       </div>
       
       <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Create New Listing</a>
-        <%  if(!currUser) { %>
-        <a class="nav-link" href="/signup"><b>SignUp</b></a>
-        <a class="nav-link" href="/login"><b>Login</b></a>
-       <% } %>
-       <%  if(currUser && currUser.isAdmin) { %>
-        <div class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-user-shield"></i> Admin
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
-            <li><a class="dropdown-item" href="/admin/users">Manage Users</a></li>
-            <li><a class="dropdown-item" href="/admin/listings">Manage Listings</a></li>
-          </ul>
-        </div>
-       <% } %>
-       <%  if(currUser) { %>
-        <a class="nav-link" href="/logout"><b>Logout</b></a>
+        <% if(currUser) { %>
+          <a class="nav-link" href="/listings/new">Create New Listing</a>
+          <% if(currUser.isOwner) { %>
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle"></i> Owner Dashboard
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/admin/owner-dashboard">Overview</a></li>
+                <li><a class="dropdown-item" href="/listings/my-listings">My Listings</a></li>
+                <li><a class="dropdown-item" href="/bookings/received">Booking Requests</a></li>
+              </ul>
+            </div>
+          <% } else { %>
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i> My Account
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/users/profile">Profile</a></li>
+                <li><a class="dropdown-item" href="/bookings">My Bookings</a></li>
+              </ul>
+            </div>
+          <% } %>
+          <% if(currUser.isAdmin) { %>
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-shield"></i> Admin
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/admin/users">Manage Users</a></li>
+                <li><a class="dropdown-item" href="/admin/listings">Manage Listings</a></li>
+              </ul>
+            </div>
+          <% } %>
+          <a class="nav-link" href="/logout"><b>Logout</b></a>
+        <% } else { %>
+          <a class="nav-link" href="/signup"><b>SignUp</b></a>
+          <a class="nav-link" href="/login"><b>Login</b></a>
         <% } %>
       </div>
     </div>

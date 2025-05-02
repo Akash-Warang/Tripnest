@@ -1,11 +1,15 @@
 const User = require("../Models/user.js");
+const Booking = require("../Models/booking.js");
+const Listing = require("../Models/listing.js");
 const { userSchema } = require("../schemas/userSchema");
+const { profileSchema } = require("../schemas/profileSchema");
 
 module.exports.renderSignupForm = (req, res) => {
     res.render("users/signup.ejs");
 }
 
 module.exports.signup = async (req, res, next) => {
+    console.log("in user 1");//.........................................
     try {
         // Validate user input against schema
         const { error } = userSchema.validate(req.body);
@@ -37,16 +41,23 @@ module.exports.signup = async (req, res, next) => {
   }
 
 module.exports.renderLoginForm =  (req, res) => {
+  console.log("in user 2");//.........................................
+
     res.render("users/login.ejs");
   }
 
 module.exports.login = async (req, res) => {
+  console.log("in user 3");//.........................................
+
     req.flash("success", "Welcome back to tripnest");
     let redirectUrl = res.locals.redirectUrl || "/listings";
+    delete req.session.redirectUrl;
     res.redirect(redirectUrl);
   }
 
 module.exports.logout = (req, res, next) => {
+  console.log("in user 4");//.........................................
+
     req.logOut((err) => {
       if (err) {
         return next(err);
@@ -55,3 +66,130 @@ module.exports.logout = (req, res, next) => {
       res.redirect("/listings");
     });
   }
+
+module.exports.renderDashboard = async (req, res) => {
+  console.log("in user 5");//.........................................
+
+  try {
+    const user = await User.findById(req.user._id);
+    const currentDate = new Date();
+
+    // Fetch all bookings for the user and populate listing details
+    const bookings = await Booking.find({ user: req.user._id })
+      .populate('listing')
+      .sort({ checkIn: -1 });
+
+    // Separate current and past bookings
+    const currentBookings = bookings.filter(booking => 
+      new Date(booking.checkOut) >= currentDate || 
+      booking.status === 'pending' || 
+      booking.status === 'confirmed'
+    );
+
+    const pastBookings = bookings.filter(booking => 
+      new Date(booking.checkOut) < currentDate && 
+      (booking.status === 'completed' || booking.status === 'cancelled')
+    );
+
+    res.render("users/dashboard.ejs", { 
+      currentUser: user,
+      currentBookings,
+      pastBookings
+    });
+  } catch (err) {
+    console.error("Dashboard error:", err);
+    req.flash("error", "Error loading dashboard");
+    res.redirect("/listings");
+  }
+}
+
+module.exports.renderProfile = async (req, res) => {
+  console.log("in user 6");//.........................................
+
+  try {
+    const user = await User.findById(req.user._id);
+    const currentDate = new Date();
+    const bookings = await Booking.find({ user: req.user._id })
+      .populate('listing')
+      .sort({ checkIn: -1 });
+
+    const currentBookings = bookings.filter(booking => 
+      new Date(booking.checkOut) >= currentDate || 
+      booking.status === 'pending' || 
+      booking.status === 'confirmed'
+    );
+
+    const pastBookings = bookings.filter(booking => 
+      new Date(booking.checkOut) < currentDate && 
+      (booking.status === 'completed' || booking.status === 'cancelled')
+    );
+
+    res.render("users/dashboard.ejs", { 
+      currentUser: user,
+      currentBookings,
+      pastBookings
+    });
+  } catch (err) {
+    req.flash("error", "Error loading profile");
+    res.redirect("/users/dashboard");
+  }
+}
+
+module.exports.updateProfile = async (req, res) => {
+  console.log("in user 6");//.........................................
+
+  try {
+    const { username, email, phone } = req.body;
+    const user = await User.findById(req.user._id);
+
+    // Validate input using profileSchema
+    const { error } = profileSchema.validate({ username, email, phone });
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    // Update user profile
+    user.username = username;
+    user.email = email;
+    user.phone = phone;
+    await user.save();
+
+    res.json({ success: true, message: 'Profile updated successfully' });
+  } catch (err) {
+    console.error('Profile update error:', err);
+    res.status(500).json({ error: 'Error updating profile' });
+  }
+};
+
+module.exports.renderOwnerDashboard = async (req, res) => {
+  console.log("in user 7");//.........................................
+
+  try {
+    const owner = await User.findById(req.user._id)
+      .populate('listings')
+      .populate({
+        path: 'listings',
+        populate: {
+          path: 'bookings',
+          model: 'Booking'
+        }
+      });
+
+    // Calculate revenue and booking stats
+    const stats = {
+      totalListings: owner.listings.length,
+      totalBookings: owner.listings.reduce((acc, listing) => acc + listing.bookings.length, 0),
+      totalRevenue: owner.listings.reduce((acc, listing) => {
+        return acc + listing.bookings.reduce((sum, booking) => {
+          return booking.status === 'completed' ? sum + booking.totalAmount : sum;
+        }, 0);
+      }, 0)
+    };
+
+    res.render("admin/owner-dashboard.ejs", { owner, stats });
+  } catch (err) {
+    console.error("Owner dashboard error:", err);
+    req.flash("error", "Error loading owner dashboard");
+    res.redirect("/listings");
+  }
+}

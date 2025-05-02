@@ -7,6 +7,7 @@ TripNest is a web application designed to help users discover unique accommodati
 - **Property Listings**: Browse and book unique accommodations
 - **Reviews & Ratings**: Read and leave reviews for properties
 - **User Profiles**: Manage your bookings and preferences
+- **Booking Management**: View and manage your bookings, including cancellation and special requests
 - **Admin Dashboard**: Manage properties and users
 
 ## Technology Stack
@@ -19,11 +20,13 @@ TripNest is a web application designed to help users discover unique accommodati
 ```
 TripNest/
 ├── Models/              # Database models
+│   ├── booking.js       # Booking model schema
 │   ├── listing.js       # Listing model schema
 │   ├── review.js        # Review model schema
 │   └── user.js          # User model schema
 ├── controllers/         # Application controllers
 │   ├── admin.js         # Admin controller
+│   ├── booking.js       # Booking controller
 │   ├── info.js          # Info controller
 │   ├── listing.js       # Listing controller
 │   ├── review.js        # Review controller
@@ -42,6 +45,7 @@ TripNest/
 │       └── script.js
 ├── routes/              # Application routes
 │   ├── admin.js         # Admin routes
+│   ├── booking.js       # Booking routes
 │   ├── info.js          # Info routes
 │   ├── listing.js       # Listing routes
 │   ├── review.js        # Review routes
@@ -71,6 +75,10 @@ TripNest/
 │   │   └── boilerplate.ejs
 │   ├── listings/        # Listing views
 │   │   ├── edit.ejs
+│   │   ├── index.ejs
+│   │   ├── new.ejs
+│   │   └── show.ejs
+│   ├── bookings/         # Booking views
 │   │   ├── index.ejs
 │   │   ├── new.ejs
 │   │   └── show.ejs
