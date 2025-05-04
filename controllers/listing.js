@@ -4,48 +4,34 @@ const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 module.exports.index = async (req, res) => {
-  const { category, minPrice, maxPrice, location, amenities, capacity, rating } = req.query;
-
-  // Build filter query
+  const { category, minPrice, maxPrice, capacity, rating, amenities } = req.query;
+  
   let filter = { verificationStatus: 'approved' };
-
-  if (category) {
-    filter.category = category;
-  }
-
+  
+  if (category) filter.category = category;
   if (minPrice || maxPrice) {
     filter.price = {};
     if (minPrice) filter.price.$gte = Number(minPrice);
     if (maxPrice) filter.price.$lte = Number(maxPrice);
   }
-
-  if (location) {
-    filter.location = { $regex: new RegExp(location, 'i') };
-  }
-
+  if (rating) filter.rating = { $gte: Number(rating) };
   if (amenities) {
-    const amenitiesArray = Array.isArray(amenities) ? amenities : [amenities];
-    filter.amenities = { $all: amenitiesArray };
+    const amenityArray = Array.isArray(amenities) ? amenities : [amenities];
+    filter.amenities = { $all: amenityArray };
   }
-
   if (capacity) {
-    const [min, max] = capacity.split('-');
-    if (max === '+') {
-      filter.numberOfGuests = { $gte: Number(min) };
+    const [min, max] = capacity.split('-').map(Number);
+    if (max) {
+      filter.capacity = { $gte: min, $lte: max };
+    } else if (capacity.includes('+')) {
+      filter.capacity = { $gte: min };
     } else {
-      filter.numberOfGuests = { 
-        $gte: Number(min), 
-        $lte: Number(max || min)
-      };
+      filter.capacity = min;
     }
   }
 
-  if (rating) {
-    filter.rating = { $gte: Number(rating) };
-  }
-
-  const allList = await Listing.find(filter);
-  res.render("./listings/index.ejs", { allList, filters: req.query });
+  const allData = await Listing.find(filter).sort({ createdAt: -1 });
+  res.render("./listings/index.ejs", { allData });
 };
 
 module.exports.renderNewForm = (req, res) => {

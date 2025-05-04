@@ -69,7 +69,7 @@
                         <td><%= listing.title %></td>
                         <td><%= listing.owner.username %></td>
                         <td><%= listing.location %></td>
-                        <td>$<%= listing.price %></td>
+                        <td>&#8377;<%= listing.price %></td>
                         <td>
                             <a href="/listings/<%= listing._id %>" class="admin-btn admin-btn-info me-2">View</a>
                             <form class="d-inline" action="/admin/listings/<%= listing._id %>?_method=DELETE" method="POST">

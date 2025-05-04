@@ -6,7 +6,7 @@ const { listingsSchema, reviewsSchema} = require("./schema.js");
 const isLoggedIn = (req, res, next) => {
     if(!req.isAuthenticated()){
         req.session.redirectUrl = req.originalUrl;
-        console.log(req.session.redirectUrl);
+        // console.log(req.session.redirectUrl);
         req.flash("error", "You have to login first");
         return res.redirect("/login");
     }

@@ -36,6 +36,7 @@ module.exports.createBooking = wrapAsync(async (req, res) => {
 
     // Process payment and confirm booking
     const paymentResult = await PaymentService.processPayment(booking._id, req.body.payment);
+    console.log(paymentResult);
     if (paymentResult.success) {
         req.flash('success', 'Booking confirmed! Payment processed successfully.');
     } else {
@@ -64,7 +65,7 @@ module.exports.listUserBookings = wrapAsync(async (req, res) => {
     const bookings = await Booking.find({ user: req.user._id })
         .populate('listing')
         .sort('-createdAt');
-    
+    console.log(bookings);
     res.render('bookings/index', { bookings });
 });
 

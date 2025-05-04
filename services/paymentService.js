@@ -1,4 +1,5 @@
 const Booking = require('../Models/booking.js');
+const razorpay = require('../services/razorpayInstance');
 
 class PaymentService {
     static async processPayment(bookingId, paymentDetails) {
@@ -7,23 +8,33 @@ class PaymentService {
             throw new Error('Booking not found');
         }
 
-        try {
-            // Here you would integrate with a payment provider 
-            // For now, we'll simulate a successful payment
-            const paymentResult = {
-                success: true,
-                paymentId: 'mock_' + Date.now()
+        try {//payment logic
+            const options = {
+                amount: booking.totalPrice * 100, // Razorpay amount is in paise
+                currency: 'INR',
+                receipt: `receipt_order_${bookingId}`,
+                notes: {
+                    bookingId: booking._id.toString(),
+                }
             };
+            
+            const order = await razorpay.orders.create(options);
 
-            if (paymentResult.success) {
-                booking.paymentStatus = 'paid';
-                booking.paymentId = paymentResult.paymentId;
-                booking.status = 'confirmed';
-                await booking.save();
-                return { success: true, booking };
-            }
+            // if (paymentResult.success) {
+            //     booking.paymentStatus = 'paid';
+            //     booking.paymentId = paymentResult.paymentId;
+            //     booking.status = 'confirmed';
+            //     await booking.save();
+            //     return { success: true, booking };
+            // }
 
-            return { success: false, error: 'Payment failed' };
+            return {
+                success: true,
+                orderId: order.id,
+                amount: order.amount,
+                currency: order.currency,
+                bookingId: booking._id
+            };
         } catch (error) {
             console.error('Payment processing error:', error);
             return { success: false, error: error.message };
@@ -37,8 +48,7 @@ class PaymentService {
         }
 
         try {
-            // Here you would integrate with payment provider's refund API
-            // For now, we'll simulate a successful refund
+            
             const refundResult = {
                 success: true,
                 refundId: 'refund_' + Date.now()

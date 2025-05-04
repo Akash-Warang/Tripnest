@@ -13,6 +13,9 @@ router.route("/signup")
   wrapAsync(userController.signup)
 );
 
+router.post('/send-otp', userController.sendOTP);
+router.post('/verify-otp', userController.verifyOTP);
+
 //login - both /login and /users/login will work
 router.route("/login")
 .get(userController.renderLoginForm)

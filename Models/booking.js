@@ -43,6 +43,9 @@ const bookingSchema = new Schema({
   paymentId: {
     type: String
   },
+  razorpayOrderId: {
+    type: String
+  },
   specialRequests: {
     type: String
   },

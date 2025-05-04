@@ -9,7 +9,7 @@ Your property is now visible to potential guests and ready to receive bookings. 
 Listing Details:
 - Title: ${listing.title}
 - Location: ${listing.location}, ${listing.country}
-- Price: $${listing.price} per night
+- Price: ₹${listing.price} per night
 
 Thank you for choosing TripNest as your hosting platform!
 

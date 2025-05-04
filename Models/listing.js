@@ -59,6 +59,7 @@ const listingSchema = new Schema({
   agreeToPolicy: {
     type: Boolean,
     required: true,  // This ensures the user has agreed to the policy
+    default:true,
   },
   rating:{
     default: 1,

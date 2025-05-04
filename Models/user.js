@@ -8,6 +8,12 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailVerificationOTP: String,
+    otpExpiry: Date,
     isAdmin: {
         type: Boolean,
         default: false

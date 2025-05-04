@@ -63,7 +63,7 @@
                                             <div class="btn-group">
                                                 <a href="/bookings/<%= booking._id %>" class="btn btn-info btn-sm">View Details</a>
                                                 <% if (booking.status === 'pending') { %>
-                                                    <a href="/bookings/<%= booking._id %>/pay" class="btn btn-success btn-sm">Pay Now</a>
+                                                    <a href="javascript:void(0)" class="btn btn-success btn-sm" id="pay-button-<%= booking._id %>">Pay Now</a>
                                                 <% } %>
                                                 <% if (!booking.isPast) { %>
                                                     <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST" class="d-inline">
@@ -111,3 +111,4 @@
 
 <link rel="stylesheet" href="/css/dashboard.css">
 <script src="/js/dashboard.js"></script>
+<script src="/js/razorpay.js"></script>

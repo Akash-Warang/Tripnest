@@ -14,8 +14,9 @@
           required
           minlength="3"
           maxlength="30"
+          pattern="^[a-zA-Z][a-zA-Z0-9_]{0,29}$"
         />
-        <div class="invalid-feedback">Username must be between 3 and 30 characters</div>
+        <div class="invalid-feedback">Username must be 3-30 characters long and can only contain letters, numbers, and underscores</div>
       </div>
 
       <div class="row">
@@ -28,8 +29,10 @@
             class="form-control"
             minlength="2"
             maxlength="30"
+            pattern="^[a-zA-Z\s]+$"
+            required
           />
-          <div class="invalid-feedback">First name must be between 2 and 30 characters</div>
+          <div class="invalid-feedback">First name must be 2-30 characters long and can only contain letters</div>
         </div>
 
         <div class="col-md-6 mb-3">
@@ -41,21 +44,45 @@
             class="form-control"
             minlength="2"
             maxlength="30"
+            pattern="^[a-zA-Z\s]+$"
+            required
           />
-          <div class="invalid-feedback">Last name must be between 2 and 30 characters</div>
+          <div class="invalid-feedback">Last name must be 2-30 characters long and can only contain letters</div>
         </div>
       </div>
 
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input
-          type="email"
-          name="email"
-          id="email"
-          class="form-control"
-          required
-        />
-        <div class="invalid-feedback">Please enter a valid email address</div>
+        <div class="input-group">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            class="form-control"
+            required
+            pattern="[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}"
+          />
+          <button type="button" class="btn btn-primary" id="sendOtpBtn">Send OTP</button>
+        </div>
+        <div class="invalid-feedback">Please enter a valid email address (e.g., user@example.com)</div>
+      </div>
+
+      <div class="mb-3" id="otpSection" style="display: none;">
+        <label for="otp" class="form-label">Enter OTP</label>
+        <div class="input-group">
+          <input
+            type="text"
+            name="otp"
+            id="otp"
+            class="form-control"
+            required
+            pattern="[0-9]{6}"
+            maxlength="6"
+          />
+          <button type="button" class="btn btn-success" id="verifyOtpBtn">Verify OTP</button>
+        </div>
+        <div class="invalid-feedback">Please enter the 6-digit OTP sent to your email</div>
+        <small class="text-muted">OTP will expire in 10 minutes</small>
       </div>
 
       <div class="mb-3">
@@ -69,9 +96,148 @@
           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
         />
         <div class="invalid-feedback">Password must contain at least 8 characters, including uppercase, lowercase, number and special character</div>
+        <div class="password-strength mt-2" style="display: none;">
+          <small class="text-muted">
+            Password strength:
+            <span class="strength-text"></span>
+          </small>
+          <div class="progress" style="height: 5px;">
+            <div class="progress-bar" role="progressbar" style="width: 0%;"></div>
+          </div>
+        </div>
       </div>
 
-      <button class="btn btn-success col-2 ">Sign Up</button>
+      <button class="btn btn-success col-2">Sign Up</button>
     </form>
+    <script src="/js/validation.js"></script>
+    <script>
+      // OTP Verification
+      const sendOtpBtn = document.getElementById('sendOtpBtn');
+      const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+      const emailInput = document.getElementById('email');
+      const otpInput = document.getElementById('otp');
+      const otpSection = document.getElementById('otpSection');
+      const form = document.querySelector('form');
+      let isEmailVerified = false;
+
+      sendOtpBtn.addEventListener('click', async () => {
+        const email = emailInput.value;
+        if (!email || !emailInput.checkValidity()) {
+          emailInput.reportValidity();
+          return;
+        }
+
+        try {
+          sendOtpBtn.disabled = true;
+          sendOtpBtn.textContent = 'Sending...';
+          const response = await fetch('/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            otpSection.style.display = 'block';
+            sendOtpBtn.textContent = 'Resend OTP';
+          } else {
+            throw new Error(data.message || 'Failed to send OTP');
+          }
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          sendOtpBtn.disabled = false;
+        }
+      });
+
+      verifyOtpBtn.addEventListener('click', async () => {
+        const otp = otpInput.value;
+        const email = emailInput.value;
+
+        if (!otp || !otpInput.checkValidity()) {
+          otpInput.reportValidity();
+          return;
+        }
+
+        try {
+          verifyOtpBtn.disabled = true;
+          verifyOtpBtn.textContent = 'Verifying...';
+          const response = await fetch('/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            isEmailVerified = true;
+            otpSection.innerHTML = '<div class="alert alert-success">Email verified successfully!</div>';
+            emailInput.readOnly = true;
+            sendOtpBtn.style.display = 'none';
+          } else {
+            throw new Error(data.message || 'Invalid OTP');
+          }
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          verifyOtpBtn.disabled = false;
+          verifyOtpBtn.textContent = 'Verify OTP';
+        }
+      });
+
+      form.addEventListener('submit', function(e) {
+        if (!isEmailVerified) {
+          e.preventDefault();
+          alert('Please verify your email address before submitting the form');
+        }
+      });
+    </script>
+    <script>
+      // Password strength indicator
+      document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('password');
+        const strengthDiv = document.querySelector('.password-strength');
+        const strengthText = document.querySelector('.strength-text');
+        const progressBar = document.querySelector('.progress-bar');
+
+        passwordInput.addEventListener('input', function() {
+          const password = this.value;
+          let strength = 0;
+          let status = '';
+
+          strengthDiv.style.display = password ? 'block' : 'none';
+
+          // Add strength for length
+          if (password.length >= 8) strength += 25;
+
+          // Add strength for containing lowercase
+          if (/[a-z]/.test(password)) strength += 25;
+
+          // Add strength for containing uppercase
+          if (/[A-Z]/.test(password)) strength += 25;
+
+          // Add strength for containing numbers and special characters
+          if (/[0-9]/.test(password) && /[@$!%*?&]/.test(password)) strength += 25;
+
+          // Set strength text and progress bar
+          if (strength <= 25) {
+            status = 'Weak';
+            progressBar.className = 'progress-bar bg-danger';
+          } else if (strength <= 50) {
+            status = 'Fair';
+            progressBar.className = 'progress-bar bg-warning';
+          } else if (strength <= 75) {
+            status = 'Good';
+            progressBar.className = 'progress-bar bg-info';
+          } else {
+            status = 'Strong';
+            progressBar.className = 'progress-bar bg-success';
+          }
+
+          strengthText.textContent = status;
+          progressBar.style.width = strength + '%';
+        });
+      });
+    </script>
   </div>
 </div>

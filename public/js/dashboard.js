@@ -75,20 +75,48 @@ document.addEventListener('DOMContentLoaded', function() {
         if (btn.textContent.includes('Pay Now')) {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const bookingId = btn.closest('.card').querySelector('.card-subtitle').textContent.split('#')[1];
+                const bookingId = btn.closest('.card').querySelector('.card-subtitle').textContent.split('#')[1].trim();
                 
                 try {
                     const response = await fetch(`/bookings/${bookingId}/pay`, {
-                        method: 'POST'
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
                     });
                     
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        try {
+                            const errorJson = JSON.parse(errorText);
+                            throw new Error(errorJson.error || 'Payment initiation failed');
+                        } catch (jsonError) {
+                            throw new Error('Server error: ' + errorText);
+                        }
+                    }
+
                     const result = await response.json();
                     if (result.success) {
-                        window.location.href = result.paymentUrl;
+                        // Initialize Razorpay payment
+                        const options = {
+                            key: result.razorpayKey,
+                            amount: result.amount,
+                            currency: result.currency,
+                            order_id: result.orderId,
+                            name: 'TripNest Booking',
+                            description: 'Booking Payment',
+                            handler: function(response) {
+                                window.location.reload();
+                            }
+                        };
+                        const rzp = new Razorpay(options);
+                        rzp.open();
                     } else {
-                        throw new Error(result.message || 'Payment initiation failed');
+                        throw new Error(result.error || 'Payment initiation failed');
                     }
                 } catch (error) {
+                    console.error('Payment error:', error);
                     alert(error.message);
                 }
             });
