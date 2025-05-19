@@ -1,16 +1,43 @@
 const Booking = require('../Models/booking.js');
 const razorpay = require('../services/razorpayInstance');
+const crypto = require('crypto');
+const mongoose = require('mongoose');
 
 class PaymentService {
-    static async processPayment(bookingId, paymentDetails) {
-        console.log(bookingId);
-        const booking = await Booking.findById(bookingId).populate('listing');
-        console.log("Booking : ", booking);
-        if (!booking) {
-            throw new Error('Booking not found');
+    static async processPayment(bookingId, paymentDetails = {}) {
+        if (!bookingId || !mongoose.Types.ObjectId.isValid(bookingId)) {
+            return { success: false, error: 'Invalid booking ID format' };
+        }
+
+        // Check if payment is already in progress
+        const existingBooking = await Booking.findById(bookingId);
+        if (existingBooking && existingBooking.razorpayOrderId) {
+            const order = await razorpay.orders.fetch(existingBooking.razorpayOrderId);
+            if (order.status !== 'paid') {
+                return {
+                    success: true,
+                    orderId: existingBooking.razorpayOrderId,
+                    amount: order.amount,
+                    currency: order.currency,
+                    bookingId: existingBooking._id
+                };
+            }
         }
 
         try {
+            const booking = await Booking.findById(bookingId).populate('listing');
+            if (!booking) {
+                return { success: false, error: 'Booking not found' };
+            }
+
+            if (!booking.totalPrice || booking.totalPrice <= 0) {
+                return { success: false, error: 'Invalid booking amount' };
+            }
+
+            if (booking.razorpayOrderId) {
+                return { success: false, error: 'Payment already initialized for this booking' };
+            }
+
             const options = {
                 amount: booking.totalPrice * 100, // Razorpay amount is in paise
                 currency: 'INR',
@@ -44,6 +71,10 @@ class PaymentService {
 
     static async verifyPayment(paymentDetails) {
         try {
+            if (!paymentDetails || !paymentDetails.razorpay_order_id || !paymentDetails.razorpay_payment_id || !paymentDetails.razorpay_signature) {
+                return { success: false, error: 'Invalid payment details provided' };
+            }
+
             const booking = await Booking.findOne({ razorpayOrderId: paymentDetails.razorpay_order_id });
             if (!booking) {
                 throw new Error('Booking not found');
