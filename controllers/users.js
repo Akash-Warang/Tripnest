@@ -206,7 +206,6 @@ module.exports.renderProfile = async (req, res) => {
         new Date(booking.checkOut) < currentDate &&
         (booking.status === "completed" || booking.status === "cancelled")
     );
-    console.log(currentBookings);
     res.render("users/dashboard.ejs", {
       currentUser: user,
       currentBookings,
@@ -220,7 +219,7 @@ module.exports.renderProfile = async (req, res) => {
 };
 
 module.exports.updateProfile = async (req, res) => {
-  console.log("in user 6"); //.........................................
+  console.log("in user 7"); //.........................................
 
   try {
     const { username, email, phone } = req.body;
@@ -246,7 +245,7 @@ module.exports.updateProfile = async (req, res) => {
 };
 
 module.exports.renderOwnerDashboard = async (req, res) => {
-  console.log("in user 7"); //.........................................
+  console.log("in user 8"); //.........................................
 
   try {
     const owner = await User.findById(req.user._id)

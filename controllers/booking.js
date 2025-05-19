@@ -65,7 +65,6 @@ module.exports.listUserBookings = wrapAsync(async (req, res) => {
     const bookings = await Booking.find({ user: req.user._id })
         .populate('listing')
         .sort('-createdAt');
-    console.log(bookings);
     res.render('bookings/index', { bookings });
 });
 

@@ -51,11 +51,11 @@ const bookingSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   },
   updatedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   }
 });
 
@@ -69,7 +69,7 @@ bookingSchema.pre("save", function(next) {
 bookingSchema.statics.checkAvailability = async function(listingId, checkIn, checkOut) {
   const overlappingBookings = await this.find({
     listing: listingId,
-    status: { $nin: ["cancelled"] },
+    status: { $in: ["cancelled"] },
     $or: [
       { checkIn: { $lte: checkOut }, checkOut: { $gte: checkIn } }
     ]

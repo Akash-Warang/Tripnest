@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             feedback.textContent = 'Please enter a valid email address';
             return false;
         } else {
-            input.setCustomValidity('Send Otp');
+            input.setCustomValidity('');
             feedback.textContent = 'Send Otp';
             return true;
         }

@@ -12,14 +12,11 @@ const sampleListings = [
     category: "Resort",
     amenities: ["WiFi", "Pool", "Spa", "Restaurant", "Gym"],
     numberOfRooms: 50,
-    bedrooms: 25,
-    bathrooms: 30,
+    bedrooms: 25,  //future scope
+    bathrooms: 30, //future scope
     guests: 100,
     contactPhone: "+1-555-0123",
     contactEmail: "luxury@mountain-resort.com",
-    checkIn: "3:00 PM",
-    checkOut: "11:00 AM",
-    roomType: "Suite",
     geometry: {
       type: "Point",
       coordinates: [-106.8222, 39.1911]

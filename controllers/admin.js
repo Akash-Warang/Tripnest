@@ -77,12 +77,13 @@ module.exports.verifyListing = async (req, res) => {
             return res.redirect("/admin/pending-listings");
         }
 
-        listing.verificationStatus = action === 'approve' ? 'approved' : 'rejected';
-        if (action === 'reject') {
-            listing.verificationMessage = message;
+        if (action === 'approve') {
+            listing.verificationStatus = 'approved';
+            await listing.save();
+        } else if (action === 'reject') {
+            // Delete the listing if rejected
+            await Listing.findByIdAndDelete(id);
         }
-
-        await listing.save();
         await sendVerificationEmail(listing, listing.verificationStatus, message);
 
         req.flash("success", `Listing ${action === 'approve' ? 'approved' : 'rejected'} successfully`);

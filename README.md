@@ -1,102 +1,77 @@
 # TripNest - Your Travel Companion
 
-## Overview
-TripNest is a web application designed to help users discover unique accommodations and experiences across India. Built with a focus on supporting local businesses and celebrating Indian culture, TripNest provides a seamless platform for travelers and property owners.
+TripNest is a comprehensive travel accommodation platform that connects travelers with unique properties while providing a seamless booking experience.
 
 ## Features
-- **Property Listings**: Browse and book unique accommodations
+
+- **User Authentication**: Secure login/signup with OTP verification
+- **Property Listings**: Browse and book unique accommodations with advanced filters
 - **Reviews & Ratings**: Read and leave reviews for properties
 - **User Profiles**: Manage your bookings and preferences
 - **Booking Management**: View and manage your bookings, including cancellation and special requests
-- **Admin Dashboard**: Manage properties and users
+- **Payment Integration**: Secure payments through Razorpay
+- **Admin Dashboard**: Manage properties, users, and bookings
+- **Owner Dashboard**: Property owners can manage their listings and bookings
+- **Interactive Maps**: View property locations using Mapbox integration
 
 ## Technology Stack
+
 - **Frontend**: EJS, HTML, CSS, JavaScript
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Authentication**: Passport.js
+- **Payment Gateway**: Razorpay
+- **Maps**: Mapbox
+- **Cloud Storage**: Cloudinary
+
+## Setup Instructions
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file with the following variables:
+   ```env
+   CLOUD_NAME=your_cloudinary_name
+   CLOUD_API_KEY=your_cloudinary_api_key
+   CLOUD_API_SECRET=your_cloudinary_secret
+   
+   MAP_TOKEN=your_mapbox_token
+   
+   EMAIL_USER=your_email
+   EMAIL_APP_PASSWORD=your_email_app_password
+   
+   RAZORPAY_API_KEY=your_razorpay_key
+   RAZORPAY_SECRET_KEY=your_razorpay_secret
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ## Project Structure
+
 ```
 TripNest/
 ├── Models/              # Database models
-│   ├── booking.js       # Booking model schema
-│   ├── listing.js       # Listing model schema
-│   ├── review.js        # Review model schema
-│   └── user.js          # User model schema
 ├── controllers/         # Application controllers
-│   ├── admin.js         # Admin controller
-│   ├── booking.js       # Booking controller
-│   ├── info.js          # Info controller
-│   ├── listing.js       # Listing controller
-│   ├── review.js        # Review controller
-│   └── users.js         # User controller
-├── public/              # Static assets (CSS, JS)
-│   ├── css/             # CSS files
-│   │   ├── about.css
-│   │   ├── admin.css
-│   │   ├── rating.css
-│   │   ├── review.css
-│   │   ├── show-dark.css
-│   │   ├── show.css
-│   │   └── style.css
-│   └── js/              # JavaScript files
-│       ├── map.js
-│       └── script.js
-├── routes/              # Application routes
-│   ├── admin.js         # Admin routes
-│   ├── booking.js       # Booking routes
-│   ├── info.js          # Info routes
-│   ├── listing.js       # Listing routes
-│   ├── review.js        # Review routes
-│   └── user.js          # User routes
-├── utils/               # Utility functions
-│   ├── ExpressErr.js    # Custom error handler
-│   ├── emailTemplates.js# Email templates
-│   └── wrapAsync.js     # Async wrapper
-├── views/               # EJS templates
-│   ├── admin/           # Admin views
-│   │   ├── dashboard.ejs
-│   │   ├── listings.ejs
-│   │   └── pending-listings.ejs
-│   ├── err.ejs          # Error view
-│   ├── includes/        # Partial views
-│   │   ├── flash.ejs
-│   │   ├── foot.ejs
-│   │   └── nav.ejs
-│   ├── info/            # Info views
-│   │   ├── about.ejs
-│   │   ├── contact.ejs
-│   │   ├── faq.ejs
-│   │   ├── help-center.ejs
-│   │   ├── privacy.ejs
-│   │   └── terms.ejs
-│   ├── layouts/         # Layouts
-│   │   └── boilerplate.ejs
-│   ├── listings/        # Listing views
-│   │   ├── edit.ejs
-│   │   ├── index.ejs
-│   │   ├── new.ejs
-│   │   └── show.ejs
-│   ├── bookings/         # Booking views
-│   │   ├── index.ejs
-│   │   ├── new.ejs
-│   │   └── show.ejs
-│   └── users/           # User views
-│       ├── login.ejs
-│       └── signup.ejs
-├── app.js               # Main application file
-├── cloudConfig.js       # Cloud configuration
-├── middleware.js        # Custom middleware
-├── package.json         # Dependencies
-└── package-lock.json    # Dependency lock file
+├── middleware/         # Custom middleware
+├── public/             # Static assets (CSS, JS)
+├── routes/             # Application routes
+├── services/           # External services integration
+├── utils/              # Utility functions
+├── views/              # EJS templates
+└── app.js             # Main application file
 ```
 
-## Installation
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables
-4. Run the application: `npm start`
-
 ## Contributing
-We welcome contributions! Please follow our contribution guidelines in CONTRIBUTING.md
+
+1. Fork the repository
+2. Create a new branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.

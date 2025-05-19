@@ -4,9 +4,17 @@ const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 module.exports.index = async (req, res) => {
-  const { category, minPrice, maxPrice, capacity, rating, amenities } = req.query;
+  const { category, minPrice, maxPrice, capacity, rating, amenities, search } = req.query;
   
   let filter = { verificationStatus: 'approved' };
+  
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { location: { $regex: search, $options: 'i' } },
+      { country: { $regex: search, $options: 'i' } }
+    ];
+  }
   
   if (category) filter.category = category;
   if (minPrice || maxPrice) {

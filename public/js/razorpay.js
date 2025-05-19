@@ -1,21 +1,27 @@
-// Trigger Razorpay payment modal
-document.getElementById("pay-button-<%= booking._id %>").onclick = function() {
-    const bookingId = "<%= booking._id %>";
-
-    fetch(`/bookings/${bookingId}/pay`, {
-        method: "POST",
+// Function to initialize payment
+function initializePayment(bookingId) {
+    fetch('/payments/create', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ bookingId }),
     })
-    .then(response => response.json())  // Make sure response is parsed as JSON
-    .then(data => {
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    })
+    .then((data) => {
         if (data.success) {
-            var options = {
-                key: 'your_razorpay_key',  // Replace with your Razorpay key
+            const options = {
+                key: data.key_id, // Get key from server
                 amount: data.amount,
                 currency: data.currency,
                 order_id: data.orderId,
+                name: 'TripNest',
+                description: 'Property Booking Payment',
                 handler: function(response) {
                     const paymentDetails = {
                         razorpay_payment_id: response.razorpay_payment_id,
@@ -34,30 +40,44 @@ document.getElementById("pay-button-<%= booking._id %>").onclick = function() {
                     .then(response => response.json())
                     .then(result => {
                         if (result.success) {
-                            alert('Payment successful and booking confirmed!');
+                            window.location.reload(); // Reload to update booking status
                         } else {
-                            alert('Payment verification failed. Please try again.');
+                            alert('Payment verification failed: ' + (result.error || 'Please try again'));
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred during payment verification.');
+                        console.error('Verification error:', error);
+                        alert('Payment verification failed. Please contact support.');
                     });
                 },
-                prefill: {
-                    name: 'John Doe',
-                    email: 'john@example.com',
-                    contact: '9999999999'
+                modal: {
+                    ondismiss: function() {
+                        console.log('Payment modal closed');
+                    }
+                },
+                theme: {
+                    color: '#007bff'
                 }
             };
-            var rzp1 = new Razorpay(options);
-            rzp1.open();
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function(response) {
+                alert('Payment failed: ' + response.error.description);
+            });
+            rzp.open();
         } else {
-            alert('Error creating payment order. Please try again.');
+            throw new Error(data.error || 'Failed to create payment order');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while processing payment.');
+        console.error('Payment error:', error);
+        alert('Error: ' + (error.message || 'Failed to initialize payment'));
     });
-};
+}
+
+// Attach click handlers to all payment buttons
+document.querySelectorAll('[id^="pay-button-"]').forEach(button => {
+    button.addEventListener('click', () => {
+        const bookingId = button.getAttribute('data-booking-id');
+        initializePayment(bookingId);
+    });
+});

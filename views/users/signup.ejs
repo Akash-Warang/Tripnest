@@ -120,6 +120,15 @@
       const form = document.querySelector('form');
       let isEmailVerified = false;
 
+      // Function to show feedback message
+      function showFeedback(message, type) {
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = `alert alert-${type} mt-2`;
+        feedbackDiv.textContent = message;
+        emailInput.closest('.mb-3').appendChild(feedbackDiv);
+        setTimeout(() => feedbackDiv.remove(), 5000);
+      }
+
       sendOtpBtn.addEventListener('click', async () => {
         const email = emailInput.value;
         if (!email || !emailInput.checkValidity()) {
@@ -128,6 +137,10 @@
         }
 
         try {
+          // Remove any existing feedback
+          const existingFeedback = emailInput.parentElement.querySelector('.alert');
+          if (existingFeedback) existingFeedback.remove();
+
           sendOtpBtn.disabled = true;
           sendOtpBtn.textContent = 'Sending...';
           const response = await fetch('/send-otp', {
@@ -136,15 +149,21 @@
             body: JSON.stringify({ email })
           });
 
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
           const data = await response.json();
           if (data.success) {
             otpSection.style.display = 'block';
             sendOtpBtn.textContent = 'Resend OTP';
+            showFeedback('OTP sent successfully! Please check your email.', 'success');
           } else {
             throw new Error(data.message || 'Failed to send OTP');
           }
         } catch (error) {
-          alert(error.message);
+          console.error('Error:', error);
+          showFeedback(error.message, 'danger');
         } finally {
           sendOtpBtn.disabled = false;
         }

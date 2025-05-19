@@ -58,7 +58,7 @@
                                                 <strong>Check-in:</strong> <%= booking.checkIn.toLocaleDateString() %><br>
                                                 <strong>Check-out:</strong> <%= booking.checkOut.toLocaleDateString() %><br>
                                                 <strong>Status:</strong> <%= booking.status %><br>
-                                                <strong>Total Amount:</strong> ₹<%= booking.totalAmount %>
+                                                <strong>Total Amount:</strong> ₹<%= booking.totalPrice %>
                                             </p>
                                             <div class="btn-group">
                                                 <a href="/bookings/<%= booking._id %>" class="btn btn-info btn-sm">View Details</a>

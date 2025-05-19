@@ -21,6 +21,7 @@ const userRouter = require("./routes/user.js");
 const adminRouter = require("./routes/admin.js");
 const infoRouter = require("./routes/info.js");
 const bookingRouter = require("./routes/booking.js");
+const paymentsRouter = require('./routes/payment.js');
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -92,7 +93,7 @@ app.use("/bookings", bookingRouter);
 app.use("/", userRouter);
 app.use("/users", userRouter);
 app.use("/info", infoRouter);
-
+app.use('/payments', paymentsRouter);
 
 //Error Handling
 // app.all("(.*)", (req, res, next) => {
