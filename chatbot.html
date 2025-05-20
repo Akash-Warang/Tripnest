@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tripnest Smart Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #fe424d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #fe424d;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header-title img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f8f8;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .user-message {
+            margin-left: auto;
+            background: #fe424d;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .bot-message {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 15px 15px 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        #send-button {
+            background: #fe424d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #send-button:hover {
+            background: #fe424d;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .suggestion-chip {
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background: #e0e0e0;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 15px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #fe424d;
+            border-radius: 50%;
+            animation: typing 1s infinite;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-widget">
+        <button class="chat-button" id="chat-toggle">
+            <i class="fas fa-comments"></i>
+        </button>
+        
+        <div class="chat-container" id="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-title">
+                    <i class="fas fa-robot"></i>
+                    <span>Tripnest Assistant</span>
+                </div>
+                <button class="close-button" id="close-chat">&times;</button>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    Hello! 👋 I'm your Tripnest assistant. How can I help you today?
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="suggestion-chips">
+                    <div class="suggestion-chip">Book a hotel</div>
+                    <div class="suggestion-chip">Check booking status</div>
+                    <div class="suggestion-chip">Cancel booking</div>
+                    <div class="suggestion-chip">View amenities</div>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="user-input" placeholder="Type your message...">
+                    <button id="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatToggle = document.getElementById('chat-toggle');
+            const chatContainer = document.getElementById('chat-container');
+            const closeChat = document.getElementById('close-chat');
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const suggestionChips = document.querySelectorAll('.suggestion-chip');
+
+            function toggleChat() {
+                const isVisible = chatContainer.style.display === 'flex';
+                chatContainer.style.display = isVisible ? 'none' : 'flex';
+            }
+
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                messageDiv.textContent = message;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.className = 'typing-indicator';
+                indicator.innerHTML = `
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                `;
+                chatMessages.appendChild(indicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return indicator;
+            }
+
+            async function handleUserInput(message) {
+                if (!message.trim()) return;
+                
+                addMessage(message, true);
+                userInput.value = '';
+
+                const typingIndicator = showTypingIndicator();
+                
+                // Simulate AI response delay
+                setTimeout(() => {
+                    chatMessages.removeChild(typingIndicator);
+                    const response = getBotResponse(message);
+                    addMessage(response);
+                }, 1500);
+            }
+
+            const hotelQuestions = {
+                // Booking Related
+                'how to book': 'To book a hotel, you can use our website or mobile app. Simply enter your destination, dates, and number of guests to see available options.',
+                'booking process': 'Our booking process is simple: 1. Select destination and dates 2. Choose your room 3. Enter guest details 4. Make payment 5. Receive confirmation.',
+                'minimum booking': 'The minimum booking duration is 1 night. For extended stays, we offer special weekly and monthly rates.',
+                'group booking': 'For group bookings (5 rooms or more), please contact our group reservations desk for special rates.',
+                'advance booking': 'You can book up to 365 days in advance. Early booking often gets you better rates.',
+                
+                // Payment Related
+                'payment methods': 'We accept all major credit/debit cards, UPI, net banking, and digital wallets. Cash payments are accepted at check-in.',
+                'deposit required': 'A one-night deposit or credit card guarantee is required for all bookings.',
+                'refund policy': 'Refunds are processed within 5-7 business days, depending on your bank.',
+                'price include': 'Room rates include basic amenities, WiFi, and taxes. Some premium services may have additional charges.',
+                'best price guarantee': 'We offer a best price guarantee. If you find a lower rate elsewhere, we\'ll match it and give you an additional 10% off.',
+                
+                // Check-in/Check-out
+                'check in time': 'Standard check-in time is 2:00 PM. Early check-in is subject to availability.',
+                'check out time': 'Standard check-out time is 11:00 AM. Late check-out can be arranged for an additional fee.',
+                'early check in': 'Early check-in is possible based on availability. Please contact us in advance to arrange this.',
+                'late check out': 'Late check-out until 2:00 PM is available for an additional 25% of the room rate.',
+                'id required': 'Valid government-issued photo ID and credit card are required at check-in.',
+                
+                // Room Related
+                'room types': 'We offer Standard, Deluxe, Suite, and Family rooms. Each type has different amenities and space configurations.',
+                'room capacity': 'Standard rooms accommodate 2 adults. Extra beds are available for children at additional cost.',
+                'connecting rooms': 'Connecting rooms are available on request, subject to availability.',
+                'smoking policy': 'We have designated smoking and non-smoking rooms. Please specify your preference while booking.',
+                'pet policy': 'Select properties are pet-friendly. Additional charges and restrictions apply.',
+                
+                // Amenities
+                'free wifi': 'Complimentary high-speed WiFi is available in all rooms and public areas.',
+                'parking': 'Free parking is available for hotel guests. Valet parking is available at select locations.',
+                'breakfast included': 'Breakfast is included in select room rates. Please check your room package details.',
+                'restaurant hours': 'Our restaurant operates from 6:30 AM to 10:30 PM daily.',
+                'room service': 'Room service is available 24/7 at most properties.',
+                
+                // Cancellation
+                'cancellation policy': 'Free cancellation is available up to 24 hours before check-in. Later cancellations may incur charges.',
+                'modify booking': 'Bookings can be modified online or through our customer service, subject to availability.',
+                'no show policy': 'No-shows will be charged the full amount of the reservation.',
+                'cancellation charges': 'Cancellation within 24 hours of check-in incurs one night\'s charge.',
+                'refund process': 'Refunds for eligible cancellations are processed within 5-7 business days.',
+                
+                // Special Requests
+                'special requests': 'Special requests (baby cot, high floor, etc.) can be made during booking but are subject to availability.',
+                'dietary requirements': 'Please inform us of any dietary requirements in advance.',
+                'accessibility': 'We offer accessible rooms and facilities. Please specify your needs while booking.',
+                'airport transfer': 'Airport transfers can be arranged at additional cost.',
+                'extra bed': 'Extra beds are available for children at ₹1000 per night.',
+                
+                // Location & Transport
+                'directions': 'Detailed directions and transport options are sent with your booking confirmation.',
+                'nearest airport': 'Distance to nearest airport varies by property. Specific information is available on each hotel page.',
+                'public transport': 'Most properties are well-connected by public transport.',
+                'parking charges': 'Parking is complimentary for hotel guests.',
+                'local attractions': 'Our concierge can provide information about local attractions and activities.',
+                
+                // Business Services
+                'meeting rooms': 'Conference and meeting facilities are available at select properties.',
+                'business center': 'Business center services include printing, scanning, and video conferencing.',
+                'internet speed': 'High-speed internet with minimum 100 Mbps is available in all areas.',
+                'work space': 'Dedicated work spaces are available in rooms and public areas.',
+                'printing service': 'Printing and photocopying services are available at the business center.',
+                
+                // Additional Services
+                'laundry service': 'Same-day laundry and dry-cleaning services are available.',
+                'currency exchange': 'Currency exchange service is available at the front desk.',
+                'medical assistance': '24/7 medical assistance can be arranged through the front desk.',
+                'child care': 'Babysitting services can be arranged with advance notice.',
+                'tour desk': 'Our tour desk can help arrange sightseeing and local experiences.',
+                
+                // Security & Safety
+                'security': '24/7 security and CCTV surveillance is maintained throughout the property.',
+                'fire safety': 'All properties comply with fire safety regulations with regular drills.',
+                'covid measures': 'We follow enhanced cleaning and safety protocols as per health guidelines.',
+                'safe deposit': 'In-room safes and front desk safety deposit boxes are available.',
+                'emergency': '24/7 emergency response team is available on premises.'
+            };
+
+            function getBotResponse(message) {
+                message = message.toLowerCase();
+                
+                // Check for exact matches in hotelQuestions
+                for (const [question, answer] of Object.entries(hotelQuestions)) {
+                    if (message.includes(question)) {
+                        return answer;
+                    }
+                }
+                
+                // AI/ML-like response generation for unknown queries
+                let bestMatch = null;
+                let highestScore = 0;
+                
+                for (const [question, answer] of Object.entries(hotelQuestions)) {
+                    const score = calculateSimilarity(message, question);
+                    if (score > highestScore && score > 0.3) { // Threshold for relevance
+                        highestScore = score;
+                        bestMatch = answer;
+                    }
+                }
+                
+                return bestMatch || "I apologize, but I'm not sure about that specific query. Would you like to know about our booking process, amenities, or check-in/check-out times?";
+            }
+
+            function calculateSimilarity(str1, str2) {
+                // Simple word matching algorithm
+                const words1 = str1.toLowerCase().split(' ');
+                const words2 = str2.toLowerCase().split(' ');
+                let matches = 0;
+                
+                for (const word1 of words1) {
+                    if (words2.includes(word1)) {
+                        matches++;
+                    }
+                }
+                
+                return matches / Math.max(words1.length, words2.length);
+            }
+
+            chatToggle.addEventListener('click', toggleChat);
+            closeChat.addEventListener('click', toggleChat);
+
+            sendButton.addEventListener('click', () => handleUserInput(userInput.value));
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleUserInput(userInput.value);
+            });
+
+            suggestionChips.forEach(chip => {
+                chip.addEventListener('click', () => handleUserInput(chip.textContent));
+            });
+        });
+    </script>
+</body>
+</html>
