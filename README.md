@@ -24,32 +24,6 @@ TripNest is a comprehensive travel accommodation platform that connects traveler
 - **Maps**: Mapbox
 - **Cloud Storage**: Cloudinary
 
-## Setup Instructions
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file with the following variables:
-   ```env
-   CLOUD_NAME=your_cloudinary_name
-   CLOUD_API_KEY=your_cloudinary_api_key
-   CLOUD_API_SECRET=your_cloudinary_secret
-   
-   MAP_TOKEN=your_mapbox_token
-   
-   EMAIL_USER=your_email
-   EMAIL_APP_PASSWORD=your_email_app_password
-   
-   RAZORPAY_API_KEY=your_razorpay_key
-   RAZORPAY_SECRET_KEY=your_razorpay_secret
-   ```
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
 ## Project Structure
 
 ```
@@ -65,13 +39,3 @@ TripNest/
 └── app.js             # Main application file
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a new branch
-3. Make your changes
-4. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
