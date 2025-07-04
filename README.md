@@ -2,10 +2,10 @@
 
 TripNest is a comprehensive travel accommodation platform that connects travelers with unique properties while providing a seamless booking experience.
 
-# Pull repository -> npm i
-# Sample Database -> cmd -> cd init -> node init.js -> cd ..
-# cmd -> nodemon app.js
-# Run Project as "http://localhost:8080/listings"
+- Pull repository -> npm i
+- Sample Database -> cmd -> cd init -> node init.js -> cd ..
+- cmd -> nodemon app.js
+- Run Project as "http://localhost:8080/listings"
 
 ## Features
 
