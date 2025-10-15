@@ -74,7 +74,9 @@ const listingSchema = new Schema({
     }
   ],
   owner: {
-    type: Schema.Types.ObjectId, ref: 'User'
+    type: Schema.Types.ObjectId, 
+    ref: 'User',
+    default: '68ef25855c85e7612e7bedfb' // Admin user ID (Akash Warang)
   },
   geometry: {
     type: {

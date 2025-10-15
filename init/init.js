@@ -1,9 +1,12 @@
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
 const mongoose = require("mongoose");
 const Listing = require("../Models/listing.js");
 const Reviews = require("../Models/review.js");
 const initData = require("./data.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/tripnest";
+const MONGO_URL = "mongodb+srv://akash_warang:akashwarang@cluster0.clurmpy.mongodb.net/TripNest?retryWrites=true&w=majority&appName=Cluster0";
 //Connection
 main()
   .then(() => {

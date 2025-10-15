@@ -39,6 +39,9 @@ module.exports.index = async (req, res) => {
   }
 
   const allData = await Listing.find(filter).sort({ createdAt: -1 });
+  console.log(allData);
+  console.log("allData");
+
   res.render("./listings/index.ejs", { allData });
 };
 
@@ -97,6 +100,7 @@ module.exports.showListing = async (req, res) => {
     req.flash("error", "Listing does not exist");
     return res.redirect("/listings");
   }
+  console.log(listing);
   res.render("./listings/show.ejs", { listing });
 };
 
