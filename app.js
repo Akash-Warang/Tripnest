@@ -57,6 +57,7 @@ passport.deserializeUser(User.deserializeUser());
 
 //Database Connection
 const MONGO_URL = process.env.MONGO_URL;
+const PORT = process.env.PORT || 8080;
 
 main()
   .then(() => {
@@ -115,7 +116,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("err", { message: err.message });
 });
  
-app.listen(8080, () => {
+app.listen(PORT, () => {
   console.log("Server is listnenig to 8080");
 });
 
