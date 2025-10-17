@@ -120,13 +120,13 @@ module.exports.signup = async (req, res, next) => {
 };
 
 module.exports.renderLoginForm = (req, res) => {
-  console.log("in user 2"); //.........................................
+  // console.log("in user 2"); //.........................................
 
   res.render("users/login.ejs");
 };
 
 module.exports.login = async (req, res) => {
-  console.log("in user 3"); //.........................................
+  // console.log("in user 3"); //.........................................
 
   req.flash("success", "Welcome back to tripnest");
   let redirectUrl = res.locals.redirectUrl || "/listings";
@@ -135,7 +135,7 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.logout = (req, res, next) => {
-  console.log("in user 4"); //.........................................
+  // console.log("in user 4"); //.........................................
 
   req.logOut((err) => {
     if (err) {
@@ -147,7 +147,7 @@ module.exports.logout = (req, res, next) => {
 };
 
 module.exports.renderDashboard = async (req, res) => {
-  console.log("in user 5"); //.........................................
+  // console.log("in user 5"); //........................................
 
   try {
     const user = await User.findById(req.user._id);
@@ -185,7 +185,7 @@ module.exports.renderDashboard = async (req, res) => {
 };
 
 module.exports.renderProfile = async (req, res) => {
-  console.log("in user 6"); //.........................................
+  // console.log("in user 6"); //........................................
 
   try {
     const user = await User.findById(req.user._id);
@@ -219,7 +219,7 @@ module.exports.renderProfile = async (req, res) => {
 };
 
 module.exports.updateProfile = async (req, res) => {
-  console.log("in user 7"); //.........................................
+  // console.log("in user 7"); //.........................................
 
   try {
     const { username, email, phone } = req.body;
@@ -245,7 +245,7 @@ module.exports.updateProfile = async (req, res) => {
 };
 
 module.exports.renderOwnerDashboard = async (req, res) => {
-  console.log("in user 8"); //.........................................
+  // console.log("in user 8"); //.........................................
 
   try {
     const owner = await User.findById(req.user._id)

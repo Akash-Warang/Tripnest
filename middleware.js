@@ -10,17 +10,17 @@ const isLoggedIn = (req, res, next) => {
         req.flash("error", "You have to login first");
         return res.redirect("/login");
     }
-    console.log("isLoggedIn");
+    // console.log("isLoggedIn");
     next();
 };
 
 const saveRedirectUrl = (req, res, next) => {
-    console.log("saveredirect");
+    // console.log("saveredirect");
     if(req.session.redirectUrl){
         res.locals.redirectUrl = req.session.redirectUrl;
         delete req.session.redirectUrl;
     }
-    console.log("redirect");
+    // console.log("redirect");
     next();
 };
 
@@ -31,7 +31,7 @@ const isOwner = async (req, res, next) => {
         req.flash("error", "Not Authorised!");
         return res.redirect(`/listings/${id}`);
     }
-    console.log("isOwner");
+    // console.log("isOwner");
     next();
 };
 
@@ -41,7 +41,7 @@ const validateListing = (req, res, next) => {
         let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(400, errMsg);
     } else {
-        console.log("validatelist");
+        // console.log("validatelist");
         next();
     }
 };
@@ -52,7 +52,7 @@ const validateReview = (req, res, next) => {
         let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(400, errMsg);
     } else {
-        console.log("validatereview");
+        // console.log("validatereview");
         next();
     }
 };
@@ -64,7 +64,7 @@ const isReviewAuthor = async (req, res, next) => {
         req.flash("error", "Not Authorised for deleting review!");
         return res.redirect(`/listings/${id}`);
     }
-    console.log("reviewAuthor");
+    // console.log("reviewAuthor");
     next();
 };
 
@@ -73,7 +73,7 @@ const isAdmin = async (req, res, next) => {
         req.flash("error", "You don't have permission to access this resource");
         return res.redirect("/listings");
     }
-    console.log("isAdmin");
+    // console.log("isAdmin");
     next();
 };
 

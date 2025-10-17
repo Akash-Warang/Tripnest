@@ -52,7 +52,7 @@ function initializePayment(bookingId) {
                 },
                 modal: {
                     ondismiss: function() {
-                        console.log('Payment modal closed');
+                        // console.log('Payment modal closed');
                     }
                 },
                 theme: {

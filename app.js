@@ -61,7 +61,7 @@ const PORT = process.env.PORT || 8080;
 
 main()
   .then(() => {
-    console.log("Main Database Connected");
+    // console.log("Main Database Connected");
   })
   .catch((err) => {
     console.log(err);
@@ -96,6 +96,8 @@ app.use("/users", userRouter);
 app.use("/info", infoRouter);
 app.use('/payments', paymentsRouter);
 
+//root route
+app.use("/", listingsRouter);
 //Error Handling
 // app.all("(.*)", (req, res, next) => {
 //   next(new ExpressError(404, "Page Not Found!"));  //throeing error thats why used app.use(); //not working thats why used anotherone
@@ -117,7 +119,7 @@ app.use((err, req, res, next) => {
 });
  
 app.listen(PORT, () => {
-  console.log("Server is listnenig to 8080");
+  // console.log("Server is listnenig to 8080");
 });
 
 //test listing

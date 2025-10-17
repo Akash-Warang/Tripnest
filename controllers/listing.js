@@ -39,19 +39,19 @@ module.exports.index = async (req, res) => {
   }
 
   const allData = await Listing.find(filter).sort({ createdAt: -1 });
-  console.log(allData);
-  console.log("allData");
+  // console.log(allData);
+  // console.log("allData");
 
   res.render("./listings/index.ejs", { allData });
 };
 
 module.exports.renderNewForm = (req, res) => {
-  console.log("in listing 1");//.........................................
+  // console.log("in listing 1");//.........................................
   res.render("./listings/new.ejs");
 };
 
 module.exports.createNewListing = async (req, res, next) => {
-  console.log("in listing 2");//.........................................
+  // console.log("in listing 2");//.........................................
   try {
     let resp = await geocodingClient
       .forwardGeocode({
@@ -91,7 +91,7 @@ module.exports.createNewListing = async (req, res, next) => {
 };
 
 module.exports.showListing = async (req, res) => {
-  console.log("in listing 3");//.........................................
+  // console.log("in listing 3");//.........................................
   let { id } = req.params;
   const listing = await Listing.findById(id)
     .populate({ path: "reviews", populate: { path: "author" } })
@@ -100,12 +100,12 @@ module.exports.showListing = async (req, res) => {
     req.flash("error", "Listing does not exist");
     return res.redirect("/listings");
   }
-  console.log(listing);
+  // console.log(listing);
   res.render("./listings/show.ejs", { listing });
 };
 
 module.exports.renderEditForm = async (req, res) => {
-  console.log("in listing 4");//.........................................
+  // console.log("in listing 4");//.........................................
   let { id } = req.params;
   const listing = await Listing.findById(id);
   if (!listing) {
@@ -122,7 +122,7 @@ module.exports.renderEditForm = async (req, res) => {
 };
 
 module.exports.updateListing = async (req, res) => {
-  console.log("in listing 5");//.........................................
+  // console.log("in listing 5");//.........................................
   let { id } = req.params;
   let list = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
 
@@ -136,11 +136,11 @@ module.exports.updateListing = async (req, res) => {
   res.redirect(`/listings/${id}`);
 };
 
-module.exports.deleteListing = async (req, res) => {
-  console.log("in listing 6");//.........................................
-  const { id } = req.params;
+module.exports.destroyListing = async (req, res) => {
+  // console.log("in listing 6");//.........................................
+  let { id } = req.params;
   let deleted = await Listing.findByIdAndDelete(id);
-  console.log(deleted);
+  // console.log(deleted);
   req.flash("success", "Listing Deleted!");
   res.redirect("/listings");
 };

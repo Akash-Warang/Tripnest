@@ -36,7 +36,7 @@ async function sendVerificationEmail(listing, status, message = '') {
 }
 
 module.exports.renderAdminDashboard = async (req, res) => {
-    console.log("in admin 1");//.........................................
+    // console.log("in admin 1");//.........................................
 
     const users = await User.find({});
     const listings = await Listing.find({}).populate('owner');
@@ -44,28 +44,28 @@ module.exports.renderAdminDashboard = async (req, res) => {
 };
 
 module.exports.getAllUsers = async (req, res) => {
-    console.log("in admin 2");//.........................................
+    // console.log("in admin 2");//.........................................
 
     const users = await User.find({});
     res.render("admin/users.ejs", { users });
 };
 
 module.exports.getAllListings = async (req, res) => {
-    console.log("in admin 3");//.........................................
+    // console.log("in admin 3");//.........................................
 
     const listings = await Listing.find({}).populate('owner');
     res.render("admin/listings.ejs", { listings });
 };
 
 module.exports.getPendingListings = async (req, res) => {
-    console.log("in admin 4");//.........................................
+    // console.log("in admin 4");//.........................................
 
     const listings = await Listing.find({ verificationStatus: 'pending' }).populate('owner');
     res.render("admin/pending-listings.ejs", { listings });
 };
 
 module.exports.verifyListing = async (req, res) => {
-    console.log("in admin 5");//.........................................
+    // console.log("in admin 5");//.........................................
 
     try {
         const { id } = req.params;
@@ -96,7 +96,7 @@ module.exports.verifyListing = async (req, res) => {
 }
 
 module.exports.toggleUserAdmin = async (req, res) => {
-    console.log("in admin 5");//.........................................
+    // console.log("in admin 5");//.........................................
 
     const { id } = req.params;
     const user = await User.findById(id);
@@ -107,7 +107,7 @@ module.exports.toggleUserAdmin = async (req, res) => {
 };
 
 module.exports.deleteListing = async (req, res) => {
-    console.log("in admin 6");//.........................................
+    // console.log("in admin 6");//.........................................
 
     const { id } = req.params;
     await Listing.findByIdAndDelete(id);
@@ -116,7 +116,7 @@ module.exports.deleteListing = async (req, res) => {
 };
 
 module.exports.deleteUser = async (req, res) => {
-    console.log("in admin 6");//.........................................
+    // console.log("in admin 6");//.........................................
 
     const { id } = req.params;
     await User.findByIdAndDelete(id);

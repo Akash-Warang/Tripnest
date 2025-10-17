@@ -6,7 +6,7 @@ const PaymentService = require('../services/paymentService.js');
 
 // Create a new booking
 module.exports.createBooking = wrapAsync(async (req, res) => {
-    console.log("in booking 1");//.........................................
+    // console.log("in booking 1");//.........................................
     const { id } = req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
@@ -36,7 +36,7 @@ module.exports.createBooking = wrapAsync(async (req, res) => {
 
     // Process payment and confirm booking
     const paymentResult = await PaymentService.processPayment(booking._id, req.body.payment);
-    console.log(paymentResult);
+    // console.log(paymentResult);
     if (paymentResult.success) {
         req.flash('success', 'Booking confirmed! Payment processed successfully.');
     } else {
@@ -47,7 +47,7 @@ module.exports.createBooking = wrapAsync(async (req, res) => {
 
 // Show booking details
 module.exports.showBooking = wrapAsync(async (req, res) => {
-    console.log("in booking 2");//.........................................
+    // console.log("in booking 2");//.........................................
     const booking = await Booking.findById(req.params.id)
         .populate('listing')
         .populate('user');
@@ -91,7 +91,7 @@ module.exports.updateBooking = wrapAsync(async (req, res) => {
 
 // Cancel booking
 module.exports.cancelBooking = wrapAsync(async (req, res) => {
-    console.log("in booking 5");//.........................................
+    // console.log("in booking 5");//.........................................
     const { id } = req.params;
     const booking = await Booking.findById(id);
     
