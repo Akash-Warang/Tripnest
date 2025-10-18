@@ -96,8 +96,13 @@ app.use("/users", userRouter);
 app.use("/info", infoRouter);
 app.use('/payments', paymentsRouter);
 
-//root route
-app.use("/", listingsRouter);
+// Root home redirects to listings
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
+
+// Favicon handler to avoid 500 when icon missing
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 //Error Handling
 // app.all("(.*)", (req, res, next) => {
 //   next(new ExpressError(404, "Page Not Found!"));  //throeing error thats why used app.use(); //not working thats why used anotherone
