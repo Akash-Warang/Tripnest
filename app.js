@@ -31,12 +31,15 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.json());
+// Trust proxy to ensure secure cookies work behind Render/Heroku-style proxies
+app.set('trust proxy', 1);
 
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "mysupersecretkey",
   resave: false,
   saveUninitialized: false,
+  proxy: true, // trust X-Forwarded-* headers behind Render's proxy
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
